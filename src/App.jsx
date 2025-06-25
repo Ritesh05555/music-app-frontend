@@ -1214,6 +1214,176 @@ function Sidebar({ isOpen, onClose }) {
 }
 
 // --- Main Screen ---
+// function MainScreen() {
+//     const { user } = useAuth();
+//     const [songs, setSongs] = useState({});
+//     const [selectedSong, setSelectedSong] = useState(null);
+//     const [searchQuery, setSearchQuery] = useState('');
+//     const [searchResults, setSearchResults] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+//     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+// const [playlistSongIds, setPlaylistSongIds] = useState([]);
+//  const navigate = useNavigate(); 
+
+//     const moods = ['happy', 'sad', 'love', 'calm'];
+//     const genres = ['travel', 'party', 'rap', 'motivational', 'pop'];
+
+//     useEffect(() => {
+//         if (sessionStorage.getItem('showWelcome') === 'true' && user) {
+//             setShowWelcomeMessage(true);
+//             sessionStorage.removeItem('showWelcome');
+//             const timer = setTimeout(() => {
+//                 setShowWelcomeMessage(false);
+//             }, 3000);
+//             return () => clearTimeout(timer);
+//         }
+//     }, [user]);
+    
+// useEffect(() => {
+//     const fetchPlaylistSongs = async () => {
+//         try {
+//             const token = localStorage.getItem('token');
+//             const res = await axios.get(`http://localhost:5000/api/playlists`, {
+//                 headers: { Authorization: `Bearer ${token}` },
+//             });
+
+//             // Assuming you want songs from all playlists (combine)
+//             const allSongIds = res.data.flatMap(p => p.songs.map(s => s._id));
+//             setPlaylistSongIds(allSongIds);
+//         } catch (err) {
+//             console.error('Failed to fetch playlist songs:', err);
+//         }
+//     };
+
+//     fetchPlaylistSongs();
+// }, []);
+
+// useEffect(() => {
+//     const fetchSongs = async () => {
+//         setLoading(true);
+//         try {
+//             const res = await axios.get('http://localhost:5000/api/songs', {
+//                 timeout: 5000,
+//                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+//             });
+//             const songsData = res.data.reduce((acc, song) => {
+//                 const category = song.mood.toLowerCase();
+//                 acc[category] = acc[category] || [];
+//                 acc[category].push(song);
+//                 return acc;
+//             }, {});
+//             setSongs(songsData);
+//         } catch (error) {
+//             console.error('Fetch error:', error);
+//             setSongs({});
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+//     fetchSongs();
+// }, []);
+
+//     const handleSearch = async () => {
+//         if (!searchQuery.trim()) {
+//             setSearchResults([]);
+//             return;
+//         }
+//         setLoading(true);
+//         try {
+//             const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(searchQuery)}`, { timeout: 5000 });
+//             setSearchResults(Array.isArray(res.data) ? res.data : []);
+//         } catch (error) {
+//             console.error('Search error:', error);
+//             setSearchResults([]);
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     const toggleSidebar = () => {
+//         setIsSidebarOpen(!isSidebarOpen);
+//     };
+
+//     if (loading) return <Loading />;
+
+//     return (
+//         <div className="main-screen">
+//             <Navbar
+//                 onSearch={handleSearch}
+//                 searchQuery={searchQuery}
+//                 setSearchQuery={setSearchQuery}
+//                 toggleSidebar={toggleSidebar}
+//             />
+//             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+//             <div className="content-area">
+//                 {searchQuery && (
+//                     <div className="search-overlay">
+//                         <input
+//                             type="text"
+//                             value={searchQuery === 'search' ? '' : searchQuery}
+//                             onChange={(e) => setSearchQuery(e.target.value)}
+//                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+//                             className="search-input"
+//                             placeholder="Search songs (e.g., hum nava mere)..."
+//                             autoFocus
+//                         />
+//                         <div className="search-results">
+//                             {searchResults.length > 0 ? (
+//                                 searchResults.map(song => (
+//                                     <div key={song._id} onClick={() => setSelectedSong(song)} className="song-list-item">
+//                                         <img src={song.thumbnailUrl || 'https://placehold.co/50x50/333/FFF?text=♪'} alt={song.title} className="song-thumbnail" />
+//                                         <div className="song-details">
+//                                             <h4>{song.title}</h4>
+//                                             <p>{song.singer}</p>
+//                                         </div>
+//                                     </div>
+//                                 ))
+//                             ) : (
+//                                 <div className="card empty">No songs found for "{searchQuery}"</div>
+//                             )}
+//                         </div>
+//                     </div>
+//                 )}
+
+//                 {!searchQuery && (
+//                     <>
+//                         {showWelcomeMessage && user && (
+//                             <div className="welcome-message animate-fade-in-out">
+//                                 Welcome, {user.fullName.split(' ')[0]}!
+//                             </div>
+//                         )}
+//                         <div className="main-content">
+//                             <section className="mood-section">
+//                                 <h2>Moods</h2>
+//                                 <div className="mood-cards">
+//                                     {moods.map((mood) => (
+//                                         <div key={mood} className={`mood-card ${mood}`} onClick={() => navigate(`/moods/${mood}`)}>
+//                                             <h3>{mood.charAt(0).toUpperCase() + mood.slice(1)}</h3>
+//                                         </div>
+//                                     ))}
+//                                 </div>
+//                             </section>
+//                             <section className="genre-section">
+//                                 <h2>Genres</h2>
+//                                 <div className="mood-cards">
+//                                     {genres.map((genre) => (
+//                                         <div key={genre} className={`mood-card ${genre}`} onClick={() => navigate(`/moods/${genre}`)}>
+//                                             <h3>{genre.charAt(0).toUpperCase() + genre.slice(1)}</h3>
+//                                         </div>
+//                                     ))}
+//                                 </div>
+//                             </section>
+//                         </div>
+//                     </>
+//                 )}
+//             </div>
+//             {selectedSong && <MusicPlayer song={selectedSong} onClose={() => setSelectedSong(null)} />}
+//         </div>
+//     );
+// }
+
 function MainScreen() {
     const { user } = useAuth();
     const [songs, setSongs] = useState({});
@@ -1223,8 +1393,8 @@ function MainScreen() {
     const [loading, setLoading] = useState(true);
     const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    const navigate = useNavigate(); // <-- Add this line
+    const [playlistSongIds, setPlaylistSongIds] = useState([]);
+    const navigate = useNavigate(); 
 
     const moods = ['happy', 'sad', 'love', 'calm'];
     const genres = ['travel', 'party', 'rap', 'motivational', 'pop'];
@@ -1239,33 +1409,50 @@ function MainScreen() {
             return () => clearTimeout(timer);
         }
     }, [user]);
+    
+    useEffect(() => {
+        const fetchPlaylistSongs = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await axios.get(`http://localhost:5000/api/playlists`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-  // ...existing code...
-useEffect(() => {
-    const fetchSongs = async () => {
-        setLoading(true);
-        try {
-            const res = await axios.get('http://localhost:5000/api/songs', {
-                timeout: 5000,
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            const songsData = res.data.reduce((acc, song) => {
-                const category = song.mood.toLowerCase();
-                acc[category] = acc[category] || [];
-                acc[category].push(song);
-                return acc;
-            }, {});
-            setSongs(songsData);
-        } catch (error) {
-            console.error('Fetch error:', error);
-            setSongs({});
-        } finally {
-            setLoading(false);
-        }
-    };
-    fetchSongs();
-}, []);
-// ...existing code...
+                // Assuming you want songs from all playlists (combine)
+                const allSongIds = res.data.flatMap(p => p.songs.map(s => s._id));
+                setPlaylistSongIds(allSongIds);
+            } catch (err) {
+                console.error('Failed to fetch playlist songs:', err);
+            }
+        };
+
+        fetchPlaylistSongs();
+    }, []);
+
+    useEffect(() => {
+        const fetchSongs = async () => {
+            setLoading(true);
+            try {
+                const res = await axios.get('http://localhost:5000/api/songs', {
+                    timeout: 5000,
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                const songsData = res.data.reduce((acc, song) => {
+                    const category = song.mood.toLowerCase();
+                    acc[category] = acc[category] || [];
+                    acc[category].push(song);
+                    return acc;
+                }, {});
+                setSongs(songsData);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                setSongs({});
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSongs();
+    }, []);
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) {
@@ -1371,40 +1558,100 @@ useEffect(() => {
 function MoodSongsScreen() {
     const { moodName } = useParams();
     const [moodSongs, setMoodSongs] = useState([]);
+    const [playlistSongIds, setPlaylistSongIds] = useState([]);
     const [loadingMoodSongs, setLoadingMoodSongs] = useState(true);
     const [selectedSong, setSelectedSong] = useState(null);
-    const navigate = useNavigate();
+    const [error, setError] = useState('');
+    const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+    const [songToAdd, setSongToAdd] = useState(null);
+    const [userPlaylists, setUserPlaylists] = useState([]);
+    const [loadingPlaylists, setLoadingPlaylists] = useState(false);
+    const [addMessage, setAddMessage] = useState('');
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
-        const fetchMoodSongs = async () => {
+        const fetchData = async () => {
             setLoadingMoodSongs(true);
+            setError('');
             try {
                 const res = await axios.get(`http://localhost:5000/api/songs?mood=${moodName.toLowerCase()}`, { timeout: 5000 });
                 setMoodSongs(Array.isArray(res.data) ? res.data : []);
-            } catch (error) {
-                console.error(`Failed to fetch songs for ${moodName}:`, error);
+                // Fetch playlist song ids for the user
+                const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+                const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
+                setPlaylistSongIds(allSongIds);
+            } catch (err) {
+                setError('Failed to load songs or playlists.');
                 setMoodSongs([]);
             } finally {
                 setLoadingMoodSongs(false);
             }
         };
-        fetchMoodSongs();
-    }, [moodName]);
+        fetchData();
+    }, [moodName, token]);
+
+    const handleAddToPlaylist = async (songId) => {
+        setSongToAdd(songId);
+        setShowPlaylistModal(true);
+        setAddMessage('');
+        setLoadingPlaylists(true);
+        try {
+            const res = await axios.get('http://localhost:5000/api/playlists', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserPlaylists(res.data || []);
+        } catch (err) {
+            setUserPlaylists([]);
+        } finally {
+            setLoadingPlaylists(false);
+        }
+    };
+
+    // --- THIS IS THE IMPORTANT FUNCTION ---
+    const handleSelectPlaylist = async (playlistId) => {
+        setAddMessage('');
+        try {
+            // Get the current playlist
+            const playlistRes = await axios.get(
+                `http://localhost:5000/api/playlists/${playlistId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
+
+            // Add the new song if not already present
+            const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
+
+            // Update the playlist with the new songs array
+            await axios.put(
+                `http://localhost:5000/api/playlists/${playlistId}`,
+                { name: playlistRes.data.name, songs: updatedSongs },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            setAddMessage('Song added to playlist!');
+            setPlaylistSongIds(prev => [...prev, songToAdd]);
+            setTimeout(() => {
+                setShowPlaylistModal(false);
+                setSongToAdd(null);
+                setAddMessage('');
+            }, 1000);
+        } catch (err) {
+            setAddMessage('Failed to add song.');
+        }
+    };
 
     const displayName = moodName.charAt(0).toUpperCase() + moodName.slice(1);
 
     return (
         <div className="mood-songs-screen">
-            <Navbar
-                onSearch={() => {}}
-                searchQuery=""
-                setSearchQuery={() => {}}
-                toggleSidebar={() => {}}
-            />
+            <Navbar onSearch={() => {}} searchQuery="" setSearchQuery={() => {}} toggleSidebar={() => {}} />
+
             <div className="content-area">
                 <h2>{displayName} Songs</h2>
                 {loadingMoodSongs ? (
                     <p className="loading-message">Fetching songs of {displayName}...</p>
+                ) : error ? (
+                    <p className="error-message">{error}</p>
                 ) : moodSongs.length > 0 ? (
                     <div className="songs-grid">
                         {moodSongs.map(song => (
@@ -1414,6 +1661,11 @@ function MoodSongsScreen() {
                                     <h4>{song.title}</h4>
                                     <p>{song.singer}</p>
                                 </div>
+                                {!playlistSongIds.includes(song._id) && (
+                                    <button className="add-song-button" onClick={(e) => { e.stopPropagation(); handleAddToPlaylist(song._id); }}>
+                                        <FontAwesomeIcon icon="fa-plus" />
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -1421,10 +1673,37 @@ function MoodSongsScreen() {
                     <p className="no-songs-message">No songs available for {displayName}.</p>
                 )}
             </div>
+
+            {showPlaylistModal && (
+                <div className="playlist-modal-overlay" onClick={() => setShowPlaylistModal(false)}>
+                    <div className="playlist-modal" onClick={e => e.stopPropagation()}>
+                        <h4>Select Playlist</h4>
+                        {loadingPlaylists ? (
+                            <div>Loading...</div>
+                        ) : userPlaylists.length > 0 ? (
+                            <ul>
+                                {userPlaylists.map(pl => (
+                                    <li key={pl._id}>
+                                        <button className="playlist-modal-btn" onClick={() => handleSelectPlaylist(pl._id)}>
+                                            {pl.name}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <div>No playlists found.</div>
+                        )}
+                        {addMessage && <div className="playlist-modal-message">{addMessage}</div>}
+                        <button className="playlist-modal-cancel" onClick={() => setShowPlaylistModal(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
             {selectedSong && <MusicPlayer song={selectedSong} onClose={() => setSelectedSong(null)} />}
         </div>
     );
 }
+
 
 // --- Account Screen ---
 function Account() {
