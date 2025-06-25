@@ -935,7 +935,7 @@ function AuthProvider({ children }) {
             setLoading(false);
         }
     }, []);
-
+// console.log('Token:', localStorage.getItem('token'));
     const login = (token, userData) => {
         localStorage.setItem('token', token);
         axios.defaults.headers.Authorization = `Bearer ${token}`;
@@ -1482,8 +1482,12 @@ function Account() {
                     <>
                         <p><strong>Full Name:</strong> {profile.fullName}</p>
                         <p><strong>Email:</strong> {profile.email}</p>
-                        <p><strong>Join Date:</strong> {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</p>
-                        <button className="edit-profile-button" onClick={handleUpdateProfile}>Edit Profile</button>
+                       <p><strong>Join Date:</strong> {profile.joinDate ? new Date(profile.joinDate).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+}) : 'N/A'}</p>
+          <button className="edit-profile-button" onClick={handleUpdateProfile}>Edit Profile</button>
                     </>
                 ) : (
                     <p>No profile data available.</p>
@@ -1497,61 +1501,89 @@ function Account() {
 function PlaylistDetailScreen() {
     const { playlistId } = useParams();
     const [playlist, setPlaylist] = useState(null);
-    const [loadingPlaylist, setLoadingPlaylist] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [selectedSong, setSelectedSong] = useState(null);
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlaylist = async () => {
-            setLoadingPlaylist(true);
+            const token = localStorage.getItem('token');
+            setLoading(true);
             setMessage('');
+
+            if (!token) {
+                setMessage('No authentication token found. Please log in.');
+                setLoading(false);
+                return;
+            }
+
             try {
                 const res = await axios.get(`http://localhost:5000/api/playlists/${playlistId}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                    headers: { Authorization: `Bearer ${token}` },
+                    timeout: 10000,
                 });
                 setPlaylist(res.data);
             } catch (error) {
-                console.error('Failed to fetch playlist:', error);
-                setMessage('Failed to load playlist.');
+                const errMsg = error.response
+                    ? `Status: ${error.response.status}, Message: ${error.response.data?.message || 'Unknown error'}`
+                    : error.message;
+                console.error('Fetch error:', errMsg);
+                setMessage(`Failed to load playlist. ${errMsg}`);
                 setPlaylist(null);
             } finally {
-                setLoadingPlaylist(false);
+                setLoading(false);
             }
         };
-        if (playlistId) {
-            fetchPlaylist();
-        }
+
+        if (playlistId) fetchPlaylist();
     }, [playlistId]);
 
     const handleRemoveSong = async (songIdToRemove) => {
-        if (!confirm('Are you sure you want to remove this song?')) {
-            return;
-        }
-        setLoadingPlaylist(true);
+        if (!window.confirm('Are you sure you want to remove this song?')) return;
+
+        setLoading(true);
         setMessage('');
+
         try {
+            const token = localStorage.getItem('token');
             const updatedSongs = playlist.songs.filter(s => s._id !== songIdToRemove).map(s => s._id);
+
             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
                 name: playlist.name,
                 songs: updatedSongs,
             }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
+
             setPlaylist(prev => ({
                 ...prev,
                 songs: prev.songs.filter(s => s._id !== songIdToRemove)
             }));
             setMessage('Song removed successfully!');
         } catch (error) {
-            console.error('Failed to remove song:', error);
+            console.error('Remove song error:', error.message);
             setMessage('Failed to remove song.');
         } finally {
-            setLoadingPlaylist(false);
+            setLoading(false);
         }
     };
 
-    if (loadingPlaylist) return <Loading />;
-    if (!playlist) return <div className="playlist-detail-screen content-area"><p>{message || 'Playlist not found.'}</p></div>;
+    if (loading) {
+        return (
+            <div className="content-area">
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (!playlist) {
+        return (
+            <div className="playlist-detail-screen content-area">
+                <p>{message || 'Playlist not found.'}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="playlist-detail-screen">
@@ -1564,29 +1596,48 @@ function PlaylistDetailScreen() {
             <div className="content-area">
                 <h2>{playlist.name}</h2>
                 {message && <div className="info-message">{message}</div>}
+
                 {playlist.songs && playlist.songs.length > 0 ? (
                     <div className="songs-grid">
                         {playlist.songs.map(song => (
-                            <div key={song._id} className="song-card" onClick={() => setSelectedSong(song)}>
-                                <img src={song.thumbnailUrl || 'https://placehold.co/50x50/333/FFF?text=♪'} alt={song.title} className="song-thumbnail" />
+                            <div
+                                key={song._id}
+                                className="song-card"
+                                onClick={() => setSelectedSong(song)}
+                            >
+                                <img
+                                    src={song.thumbnailUrl || 'https://placehold.co/50x50/333/FFF?text=♪'}
+                                    alt={song.title}
+                                    className="song-thumbnail"
+                                />
                                 <div className="song-details">
                                     <h4>{song.title}</h4>
                                     <p>{song.singer}</p>
                                 </div>
-                                <button className="remove-song-button" onClick={(e) => { e.stopPropagation(); handleRemoveSong(song._id); }}>
+                                <button
+                                    className="remove-song-button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveSong(song._id);
+                                    }}
+                                >
                                     <FontAwesomeIcon icon="fa-minus" />
                                 </button>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <p>No songs in this playlist.</p>
+                    <p>Your playlist is empty. Add songs to enjoy your music!</p>
                 )}
             </div>
-            {selectedSong && <MusicPlayer song={selectedSong} onClose={() => setSelectedSong(null)} />}
+
+            {selectedSong && (
+                <MusicPlayer song={selectedSong} onClose={() => setSelectedSong(null)} />
+            )}
         </div>
     );
 }
+
 
 // --- Admin Dashboard ---
 function AdminDashboard() {
