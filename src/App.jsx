@@ -21,7 +21,7 @@
 //         if (token) {
 //             axios.defaults.headers.Authorization = `Bearer ${token}`;
 //             axios
-//                 .get('http://localhost:5000/api/user/profile')
+//                 .get('https://music-backend-akb5.onrender.com/api/user/profile')
 //                 .then((res) => {
 //                     setUser(res.data);
 //                 })
@@ -116,7 +116,7 @@
 //         setLoading(true);
 //         setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             login(res.data.token, res.data.user, navigate);
@@ -233,7 +233,7 @@
 //     const fetchPlaylists = useCallback(async () => {
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //             });
 //             setPlaylists(res.data);
@@ -280,7 +280,7 @@
 //         const playlistName = prompt('Enter playlist name:');
 //         if (playlistName) {
 //             try {
-//                 await axios.post('http://localhost:5000/api/playlists', { name: playlistName }, {
+//                 await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name: playlistName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 fetchPlaylists();
@@ -368,7 +368,7 @@
 //         const fetchPlaylistSongs = async () => {
 //             try {
 //                 const token = localStorage.getItem('token');
-//                 const res = await axios.get(`http://localhost:5000/api/playlists`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                 });
 //                 const allSongIds = res.data.flatMap(p => p.songs.map(s => s._id));
@@ -384,7 +384,7 @@
 //         const fetchSongs = async () => {
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //                 });
@@ -425,7 +425,7 @@
 //             }
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
 //                 setSearchResults(Array.isArray(res.data) ? res.data : []);
 //             } catch (error) {
 //                 console.error('Search error:', error);
@@ -455,7 +455,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -470,13 +470,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
@@ -640,14 +640,14 @@
 //             setLoadingMoodSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setMoodSongs(songs.filter(song => song.mood && song.mood.toLowerCase().includes(moodName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -666,7 +666,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -681,13 +681,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -795,14 +795,14 @@
 //             setLoadingGenreSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setGenreSongs(songs.filter(song => song.genre && song.genre.toLowerCase().includes(genreName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -821,7 +821,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -836,13 +836,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -940,7 +940,7 @@
 //         const fetchProfile = async () => {
 //             setLoadingProfile(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setProfile(res.data);
 //             } catch (error) {
 //                 console.error('Failed to fetch profile:', error);
@@ -956,7 +956,7 @@
 //         const newFullName = prompt("Enter new full name:", profile?.fullName);
 //         if (newFullName && newFullName !== profile.fullName) {
 //             try {
-//                 const res = await axios.put('http://localhost:5000/api/user/profile', { fullName: newFullName }, {
+//                 const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', { fullName: newFullName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 setProfile(res.data);
@@ -1026,7 +1026,7 @@
 //             }
 
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                     timeout: 10000,
 //                 });
@@ -1056,7 +1056,7 @@
 //             const token = localStorage.getItem('token');
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songIdToRemove).map(s => s._id);
 
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                 name: playlist.name,
 //                 songs: updatedSongs,
 //             }, {
@@ -1080,7 +1080,7 @@
 //         const newName = prompt('Enter new playlist name:', playlist.name);
 //         if (newName && newName !== playlist.name) {
 //             try {
-//                 await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     name: newName,
 //                     songs: playlist.songs.map(s => s._id),
 //                 }, {
@@ -1387,7 +1387,7 @@
 //         if (token) {
 //             axios.defaults.headers.Authorization = `Bearer ${token}`;
 //             axios
-//                 .get('http://localhost:5000/api/user/profile')
+//                 .get('https://music-backend-akb5.onrender.com/api/user/profile')
 //                 .then((res) => {
 //                     setUser(res.data);
 //                 })
@@ -1482,7 +1482,7 @@
 //         setLoading(true);
 //         setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             login(res.data.token, res.data.user, navigate);
@@ -1599,7 +1599,7 @@
 //     const fetchPlaylists = useCallback(async () => {
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //             });
 //             setPlaylists(res.data);
@@ -1646,7 +1646,7 @@
 //         const playlistName = prompt('Enter playlist name:');
 //         if (playlistName) {
 //             try {
-//                 await axios.post('http://localhost:5000/api/playlists', { name: playlistName }, {
+//                 await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name: playlistName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 fetchPlaylists();
@@ -1734,7 +1734,7 @@
 //         const fetchPlaylistSongs = async () => {
 //             try {
 //                 const token = localStorage.getItem('token');
-//                 const res = await axios.get(`http://localhost:5000/api/playlists`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                 });
 //                 const allSongIds = res.data.flatMap(p => p.songs.map(s => s._id));
@@ -1750,7 +1750,7 @@
 //         const fetchSongs = async () => {
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //                 });
@@ -1791,7 +1791,7 @@
 //             }
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
 //                 setSearchResults(Array.isArray(res.data) ? res.data : []);
 //             } catch (error) {
 //                 console.error('Search error:', error);
@@ -1821,7 +1821,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -1836,13 +1836,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
@@ -2008,14 +2008,14 @@
 //             setLoadingMoodSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setMoodSongs(songs.filter(song => song.mood && song.mood.toLowerCase().includes(moodName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -2034,7 +2034,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -2049,13 +2049,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -2163,14 +2163,14 @@
 //             setLoadingGenreSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setGenreSongs(songs.filter(song => song.genre && song.genre.toLowerCase().includes(genreName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -2189,7 +2189,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -2204,13 +2204,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -2308,7 +2308,7 @@
 //         const fetchProfile = async () => {
 //             setLoadingProfile(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setProfile(res.data);
 //             } catch (error) {
 //                 console.error('Failed to fetch profile:', error);
@@ -2324,7 +2324,7 @@
 //         const newFullName = prompt("Enter new full name:", profile?.fullName);
 //         if (newFullName && newFullName !== profile.fullName) {
 //             try {
-//                 const res = await axios.put('http://localhost:5000/api/user/profile', { fullName: newFullName }, {
+//                 const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', { fullName: newFullName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 setProfile(res.data);
@@ -2394,7 +2394,7 @@
 //             }
 
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                     timeout: 10000,
 //                 });
@@ -2424,7 +2424,7 @@
 //             const token = localStorage.getItem('token');
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songIdToRemove).map(s => s._id);
 
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                 name: playlist.name,
 //                 songs: updatedSongs,
 //             }, {
@@ -2448,7 +2448,7 @@
 //         const newName = prompt('Enter new playlist name:', playlist.name);
 //         if (newName && newName !== playlist.name) {
 //             try {
-//                 await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     name: newName,
 //                     songs: playlist.songs.map(s => s._id),
 //                 }, {
@@ -2767,7 +2767,7 @@
 //         if (token) {
 //             axios.defaults.headers.Authorization = `Bearer ${token}`;
 //             axios
-//                 .get('http://localhost:5000/api/user/profile')
+//                 .get('https://music-backend-akb5.onrender.com/api/user/profile')
 //                 .then((res) => {
 //                     setUser(res.data);
 //                 })
@@ -2862,7 +2862,7 @@
 //         setLoading(true);
 //         setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             login(res.data.token, res.data.user, navigate);
@@ -2979,7 +2979,7 @@
 //     const fetchPlaylists = useCallback(async () => {
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //             });
 //             setPlaylists(res.data);
@@ -3026,7 +3026,7 @@
 //         const playlistName = prompt('Enter playlist name:');
 //         if (playlistName) {
 //             try {
-//                 await axios.post('http://localhost:5000/api/playlists', { name: playlistName }, {
+//                 await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name: playlistName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 fetchPlaylists();
@@ -3113,7 +3113,7 @@
 //         const fetchPlaylistSongs = async () => {
 //             try {
 //                 const token = localStorage.getItem('token');
-//                 const res = await axios.get(`http://localhost:5000/api/playlists`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                 });
 //                 const allSongIds = res.data.flatMap(p => p.songs.map(s => s._id));
@@ -3129,7 +3129,7 @@
 //         const fetchSongs = async () => {
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //                 });
@@ -3170,7 +3170,7 @@
 //             }
 //             setLoading(true);
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`, { timeout: 5000 });
 //                 setSearchResults(Array.isArray(res.data) ? res.data : []);
 //             } catch (error) {
 //                 console.error('Search error:', error);
@@ -3200,7 +3200,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -3215,13 +3215,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
 //             );
@@ -3383,14 +3383,14 @@
 //             setLoadingMoodSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setMoodSongs(songs.filter(song => song.mood && song.mood.toLowerCase().includes(moodName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -3409,7 +3409,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -3424,13 +3424,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -3535,14 +3535,14 @@
 //             setLoadingGenreSongs(true);
 //             setError('');
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/songs', {
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/songs', {
 //                     timeout: 5000,
 //                     headers: { Authorization: `Bearer ${token}` }
 //                 });
 //                 const songs = Array.isArray(res.data) ? res.data : [];
 //                 setAllSongs(songs);
 //                 setGenreSongs(songs.filter(song => song.genre && song.genre.toLowerCase().includes(genreName.toLowerCase())));
-//                 const playlistRes = await axios.get('http://localhost:5000/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
+//                 const playlistRes = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', { headers: { Authorization: `Bearer ${token}` } });
 //                 const allSongIds = (playlistRes.data || []).flatMap(pl => (pl.songs || []).map(s => s._id));
 //                 setPlaylistSongIds(allSongIds);
 //             } catch (err) {
@@ -3561,7 +3561,7 @@
 //         setAddMessage('');
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setUserPlaylists(res.data || []);
@@ -3576,13 +3576,13 @@
 //         setAddMessage('');
 //         try {
 //             const playlistRes = await axios.get(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
 //             const currentSongs = (playlistRes.data.songs || []).map(s => s._id);
 //             const updatedSongs = currentSongs.includes(songToAdd) ? currentSongs : [...currentSongs, songToAdd];
 //             await axios.put(
-//                 `http://localhost:5000/api/playlists/${playlistId}`,
+//                 `https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`,
 //                 { name: playlistRes.data.name, songs: updatedSongs },
 //                 { headers: { Authorization: `Bearer ${token}` } }
 //             );
@@ -3678,7 +3678,7 @@
 //         const fetchProfile = async () => {
 //             setLoadingProfile(true);
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setProfile(res.data);
 //             } catch (error) {
 //                 console.error('Failed to fetch profile:', error);
@@ -3694,7 +3694,7 @@
 //         const newFullName = prompt("Enter new full name:", profile?.fullName);
 //         if (newFullName && newFullName !== profile.fullName) {
 //             try {
-//                 const res = await axios.put('http://localhost:5000/api/user/profile', { fullName: newFullName }, {
+//                 const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', { fullName: newFullName }, {
 //                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 //                 });
 //                 setProfile(res.data);
@@ -3763,7 +3763,7 @@
 //             }
 
 //             try {
-//                 const res = await axios.get(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 const res = await axios.get(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     headers: { Authorization: `Bearer ${token}` },
 //                     timeout: 10000,
 //                 });
@@ -3793,7 +3793,7 @@
 //             const token = localStorage.getItem('token');
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songIdToRemove).map(s => s._id);
 
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                 name: playlist.name,
 //                 songs: updatedSongs,
 //             }, {
@@ -3817,7 +3817,7 @@
 //         const newName = prompt('Enter new playlist name:', playlist.name);
 //         if (newName && newName !== playlist.name) {
 //             try {
-//                 await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, {
+//                 await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, {
 //                     name: newName,
 //                     songs: playlist.songs.map(s => s._id),
 //                 }, {
@@ -4224,7 +4224,7 @@
 //         if (token) {
 //             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setUser(res.data);
 //             } catch (error) {
 //                  console.error('Auth error:', error);
@@ -4263,7 +4263,7 @@
 //     const updateUser = async (userData) => {
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+//             const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             // Update user state with new data from response
@@ -4305,7 +4305,7 @@
 //         };
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             const fetchedPlaylists = res.data || [];
@@ -4331,7 +4331,7 @@
 //                  return { success: false, message: 'Song already in playlist' };
 //             }
 //             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song added to playlist!' };
 //         } catch (err) {
@@ -4342,7 +4342,7 @@
     
 //     const createPlaylist = async (name) => {
 //         try {
-//             await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //         } catch (error) { console.error('Failed to create playlist:', error); }
 //     };
@@ -4351,7 +4351,7 @@
 //         try {
 //             const playlist = playlists.find(p => p._id === playlistId);
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song removed successfully!' };
 //         } catch (error) {
@@ -4361,7 +4361,7 @@
 //     };
 //     const updatePlaylistName = async (playlistId, newName) => {
 //          try {
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Playlist updated!' };
 //         } catch (error) {
@@ -4417,7 +4417,7 @@
 //     const handleSubmit = async (e) => {
 //         e.preventDefault(); setLoading(true); setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             if(res.data.token && res.data.user) login(res.data.token, res.data.user, navigate);
@@ -4614,7 +4614,7 @@
 //                 if (!query.trim()) { setSearchResults([]); return; }
 //                 setLoadingSearch(true);
 //                 try {
-//                     const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`);
+//                     const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`);
 //                     setSearchResults(Array.isArray(res.data) ? res.data : []);
 //                 } catch (error) { console.error('Search error:', error); } finally { setLoadingSearch(false); }
 //             }, 300);
@@ -4720,7 +4720,7 @@
 
 //     useEffect(() => {
 //         setLoading(true);
-//         axios.get(`http://localhost:5000/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
+//         axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
 //             .then(res => setSongs(res.data)).catch(err => console.error(err)).finally(() => setLoading(false));
 //     }, [name, categoryType, token]);
 
@@ -4919,7 +4919,7 @@
 //         if (token) {
 //             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setUser(res.data);
 //             } catch (error) {
 //                  console.error('Auth error:', error);
@@ -4958,7 +4958,7 @@
 //     const updateUser = async (userData) => {
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+//             const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             // Update user state with new data from response
@@ -5000,7 +5000,7 @@
 //         };
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             const fetchedPlaylists = res.data || [];
@@ -5026,7 +5026,7 @@
 //                  return { success: false, message: 'Song already in playlist' };
 //             }
 //             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song added to playlist!' };
 //         } catch (err) {
@@ -5037,7 +5037,7 @@
     
 //     const createPlaylist = async (name) => {
 //         try {
-//             await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //         } catch (error) { console.error('Failed to create playlist:', error); }
 //     };
@@ -5046,7 +5046,7 @@
 //         try {
 //             const playlist = playlists.find(p => p._id === playlistId);
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song removed successfully!' };
 //         } catch (error) {
@@ -5056,7 +5056,7 @@
 //     };
 //     const updatePlaylistName = async (playlistId, newName) => {
 //          try {
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Playlist updated!' };
 //         } catch (error) {
@@ -5112,7 +5112,7 @@
 //     const handleSubmit = async (e) => {
 //         e.preventDefault(); setLoading(true); setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             if(res.data.token && res.data.user) login(res.data.token, res.data.user, navigate);
@@ -5334,7 +5334,7 @@
 //                 if (!query.trim()) { setSearchResults([]); return; }
 //                 setLoadingSearch(true);
 //                 try {
-//                     const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`);
+//                     const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`);
 //                     setSearchResults(Array.isArray(res.data) ? res.data : []);
 //                 } catch (error) { console.error('Search error:', error); } finally { setLoadingSearch(false); }
 //             }, 300);
@@ -5440,7 +5440,7 @@
 
 //     useEffect(() => {
 //         setLoading(true);
-//         axios.get(`http://localhost:5000/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
+//         axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
 //             .then(res => setSongs(res.data)).catch(err => console.error(err)).finally(() => setLoading(false));
 //     }, [name, categoryType, token]);
 
@@ -5641,7 +5641,7 @@
 //         if (token) {
 //             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setUser(res.data);
 //             } catch (error) {
 //                  console.error('Auth error:', error);
@@ -5680,7 +5680,7 @@
 //     const updateUser = async (userData) => {
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+//             const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             // Update user state with new data from response
@@ -5722,7 +5722,7 @@
 //         };
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             const fetchedPlaylists = res.data || [];
@@ -5748,7 +5748,7 @@
 //                  return { success: false, message: 'Song already in playlist' };
 //             }
 //             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song added to playlist!' };
 //         } catch (err) {
@@ -5759,7 +5759,7 @@
     
 //     const createPlaylist = async (name) => {
 //         try {
-//             await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //         } catch (error) { console.error('Failed to create playlist:', error); }
 //     };
@@ -5768,7 +5768,7 @@
 //         try {
 //             const playlist = playlists.find(p => p._id === playlistId);
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song removed successfully!' };
 //         } catch (error) {
@@ -5778,7 +5778,7 @@
 //     };
 //     const updatePlaylistName = async (playlistId, newName) => {
 //          try {
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Playlist updated!' };
 //         } catch (error) {
@@ -5834,7 +5834,7 @@
 //     const handleSubmit = async (e) => {
 //         e.preventDefault(); setLoading(true); setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             if(res.data.token && res.data.user) login(res.data.token, res.data.user, navigate);
@@ -6055,7 +6055,7 @@
 //                 if (!query.trim()) { setSearchResults([]); return; }
 //                 setLoadingSearch(true);
 //                 try {
-//                     const res = await axios.get(`http://localhost:5000/api/songs?search=${encodeURIComponent(query)}`);
+//                     const res = await axios.get(`https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query)}`);
 //                     setSearchResults(Array.isArray(res.data) ? res.data : []);
 //                 } catch (error) { console.error('Search error:', error); } finally { setLoadingSearch(false); }
 //             }, 300);
@@ -6176,7 +6176,7 @@
 
 //     useEffect(() => {
 //         setLoading(true);
-//         axios.get(`http://localhost:5000/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
+//         axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
 //             .then(res => setSongs(res.data)).catch(err => console.error(err)).finally(() => setLoading(false));
 //     }, [name, categoryType, token]);
 
@@ -6402,7 +6402,7 @@
 //         if (token) {
 //             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setUser(processUserData(res.data));
 //             } catch (error) {
 //                  console.error('Auth error:', error);
@@ -6441,7 +6441,7 @@
 //     const updateUser = async (userData) => {
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+//             const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             setUser(processUserData(res.data)); // Process updated data
@@ -6482,7 +6482,7 @@
 //         };
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             const fetchedPlaylists = res.data || [];
@@ -6508,7 +6508,7 @@
 //                  return { success: false, message: 'Song already in playlist' };
 //             }
 //             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song added to playlist!' };
 //         } catch (err) {
@@ -6519,7 +6519,7 @@
     
 //     const createPlaylist = async (name) => {
 //         try {
-//             await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //         } catch (error) { console.error('Failed to create playlist:', error); }
 //     };
@@ -6528,7 +6528,7 @@
 //         try {
 //             const playlist = playlists.find(p => p._id === playlistId);
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song removed successfully!' };
 //         } catch (error) {
@@ -6538,7 +6538,7 @@
 //     };
 //     const updatePlaylistName = async (playlistId, newName) => {
 //          try {
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Playlist updated!' };
 //         } catch (error) {
@@ -6595,7 +6595,7 @@
 //     const handleSubmit = async (e) => {
 //         e.preventDefault(); setLoading(true); setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             if(res.data.token && res.data.user){
@@ -6864,7 +6864,7 @@
 //             timeoutId = setTimeout(async () => {
 //                 setLoadingSearch(true);
 //                 try {
-//                     let url = 'http://localhost:5000/api/songs';
+//                     let url = 'https://music-backend-akb5.onrender.com/api/songs';
 //                     if (query.trim()) {
 //                         // Example: searching across multiple fields. Adjust backend for optimal search.
 //                         // For simplicity, this example assumes backend can handle a single 'search' param
@@ -7015,7 +7015,7 @@
 
 //     useEffect(() => {
 //         setLoading(true);
-//         axios.get(`http://localhost:5000/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
+//         axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
 //             .then(res => setSongs(res.data)).catch(err => console.error(err)).finally(() => setLoading(false));
 //     }, [name, categoryType, token]);
 
@@ -7219,7 +7219,7 @@
 //         if (token) {
 //             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 //             try {
-//                 const res = await axios.get('http://localhost:5000/api/user/profile');
+//                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
 //                 setUser(processUserData(res.data));
 //             } catch (error) {
 //                 console.error('Auth error:', error);
@@ -7256,7 +7256,7 @@
 //     const updateUser = async (userData) => {
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+//             const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             setUser(processUserData(res.data));
@@ -7296,7 +7296,7 @@
 //         }
 //         setLoadingPlaylists(true);
 //         try {
-//             const res = await axios.get('http://localhost:5000/api/playlists', {
+//             const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
 //                 headers: { Authorization: `Bearer ${token}` },
 //             });
 //             const fetchedPlaylists = res.data || [];
@@ -7322,7 +7322,7 @@
 //                 return { success: false, message: 'Song already in playlist' };
 //             }
 //             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song added to playlist!' };
 //         } catch (err) {
@@ -7333,7 +7333,7 @@
     
 //     const createPlaylist = async (name) => {
 //         try {
-//             await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //         } catch (error) {
 //             console.error('Failed to create playlist:', error);
@@ -7344,7 +7344,7 @@
 //         try {
 //             const playlist = playlists.find(p => p._id === playlistId);
 //             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Song removed successfully!' };
 //         } catch (error) {
@@ -7355,7 +7355,7 @@
 
 //     const updatePlaylistName = async (playlistId, newName) => {
 //         try {
-//             await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+//             await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
 //             await fetchPlaylists();
 //             return { success: true, message: 'Playlist updated!' };
 //         } catch (error) {
@@ -7413,7 +7413,7 @@
 //         setLoading(true);
 //         setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password };
 //             const res = await axios.post(endpoint, data);
 //             if (res.data.token && res.data.user) {
@@ -7735,7 +7735,7 @@
 //             timeoutId = setTimeout(async () => {
 //                 setLoadingSearch(true);
 //                 try {
-//                     let url = 'http://localhost:5000/api/songs';
+//                     let url = 'https://music-backend-akb5.onrender.com/api/songs';
 //                     if (query.trim()) {
 //                         url += `?search=${encodeURIComponent(query.trim())}`;
 //                     }
@@ -7983,7 +7983,7 @@
 //     useEffect(() => {
 //         setLoading(true);
 //         axios
-//             .get(`http://localhost:5000/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
+//             .get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${name}`, { headers: { Authorization: `Bearer ${token}` } })
 //             .then((res) => setSongs(res.data))
 //             .catch((err) => console.error(err))
 //             .finally(() => setLoading(false));
@@ -8215,7 +8215,7 @@ function AuthProvider({ children }) {
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
-                const res = await axios.get('http://localhost:5000/api/user/profile');
+                const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
                 setUser(processUserData(res.data));
             } catch (error) {
                 console.error('Auth error:', error);
@@ -8252,7 +8252,7 @@ function AuthProvider({ children }) {
     const updateUser = async (userData) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.put('http://localhost:5000/api/user/profile', userData, {
+            const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUser(processUserData(res.data));
@@ -8292,7 +8292,7 @@ function PlaylistProvider({ children }) {
         }
         setLoadingPlaylists(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/playlists', {
+            const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const fetchedPlaylists = res.data || [];
@@ -8318,7 +8318,7 @@ function PlaylistProvider({ children }) {
                 return { success: false, message: 'Song already in playlist' };
             }
             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-            await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Song added to playlist!' };
         } catch (err) {
@@ -8329,7 +8329,7 @@ function PlaylistProvider({ children }) {
     
     const createPlaylist = async (name) => {
         try {
-            await axios.post('http://localhost:5000/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
         } catch (error) {
             console.error('Failed to create playlist:', error);
@@ -8340,7 +8340,7 @@ function PlaylistProvider({ children }) {
         try {
             const playlist = playlists.find(p => p._id === playlistId);
             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-            await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Song removed successfully!' };
         } catch (error) {
@@ -8351,7 +8351,7 @@ function PlaylistProvider({ children }) {
 
     const updatePlaylistName = async (playlistId, newName) => {
         try {
-            await axios.put(`http://localhost:5000/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Playlist updated!' };
         } catch (error) {
@@ -8409,7 +8409,7 @@ function AuthScreen() {
         setLoading(true);
         setMessage('');
         try {
-            const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+            const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
             const data = isLogin ? { email, password } : { fullName, email, password };
             const res = await axios.post(endpoint, data);
             if (res.data.token && res.data.user) {
@@ -8731,7 +8731,7 @@ function SearchScreen() {
             timeoutId = setTimeout(async () => {
                 setLoadingSearch(true);
                 try {
-                    let url = 'http://localhost:5000/api/songs';
+                    let url = 'https://music-backend-akb5.onrender.com/api/songs';
                     if (query.trim()) {
                         url += `?search=${encodeURIComponent(query.trim())}`;
                     }
@@ -9010,7 +9010,7 @@ function CategorySongsScreen({ categoryType }) {
     useEffect(() => {
         setLoading(true);
         setError(null);
-        let url = `http://localhost:5000/api/songs?${categoryType}=${encodeURIComponent(name)}`;
+        let url = `https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${encodeURIComponent(name)}`;
         console.log(`API Call URL: ${url}`);
         axios
             .get(url, {
