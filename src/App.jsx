@@ -8389,7 +8389,7 @@ function SplashScreen() {
     }, [navigate]);
     return (
         <div className="splash-screen">
-            <h1>Gawana</h1>
+            <h1>SunDhun</h1>
         </div>
     );
 }
