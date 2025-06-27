@@ -262,6 +262,9 @@ body[data-mode="neon"] .admin-panel {
     border-radius: 0.75rem;
     max-width: 90%;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 body[data-mode="light"] .welcome-overlay div {
@@ -922,10 +925,9 @@ body[data-mode="neon"] .search-results::-webkit-scrollbar-thumb {
     z-index: 100;
     transition: transform 0.3s ease-out;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     box-sizing: border-box;
-    min-height: 70px;
+    min-height: 90px;
 }
 
 body[data-mode="light"] .music-player {
@@ -1059,7 +1061,7 @@ body[data-mode="neon"] .music-player .song-info p {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 0 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .music-player .time-display {
@@ -1068,6 +1070,7 @@ body[data-mode="neon"] .music-player .song-info p {
     width: 100%;
     font-size: 0.8rem;
     color: var(--text-color);
+    margin-bottom: 0.5rem;
 }
 
 body[data-mode="light"] .music-player .time-display {
@@ -1219,8 +1222,16 @@ body[data-mode="neon"] .music-player .player-buttons button:hover {
 }
 
 .music-player .volume-slider {
-    width: 70px;
-    margin-left: 0.8rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+}
+
+.music-player .volume-slider input[type="range"] {
+    width: 80%;
+    margin: 0;
 }
 
 /* Screens for Moods, Account, Playlist Details, Search */
@@ -1903,10 +1914,6 @@ body[data-mode="neon"] .modal-content button:hover {
         gap: 0.6rem;
     }
 
-    .music-player .volume-slider {
-        width: 60px;
-    }
-
     .music-player img {
         margin-bottom: 0.5rem;
     }
@@ -1969,6 +1976,10 @@ body[data-mode="neon"] .modal-content button:hover {
         margin-bottom: 0.5rem;
     }
 
+    .music-player .player-content {
+        padding: 0 1.5rem;
+    }
+
     .music-player .player-buttons {
         flex-wrap: wrap;
         justify-content: center;
@@ -1986,5 +1997,13 @@ body[data-mode="neon"] .modal-content button:hover {
     .song-tile-thumbnail {
         width: 70px;
         height: 70px;
+    }
+
+    .music-player .time-display {
+        font-size: 0.7rem;
+    }
+
+    .music-player .volume-slider input[type="range"] {
+        width: 70%;
     }
 }
