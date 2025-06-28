@@ -1186,7 +1186,8 @@ body[data-mode="neon"] .music-player .time-display {
 .music-player .player-buttons {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    justify-content: center;
+    gap: 1rem;
     margin-top: 0.5rem;
 }
 
@@ -1939,6 +1940,10 @@ body[data-mode="neon"] .modal-content button:hover {
     .search-input-field {
         width: 90%;
     }
+
+    .music-player .volume-slider {
+        display: none; /* Remove volume slider on tablet and phone */
+    }
 }
 
 @media (max-width: 768px) {
@@ -1993,10 +1998,6 @@ body[data-mode="neon"] .modal-content button:hover {
     .music-player .time-display {
         font-size: 0.75rem;
     }
-
-    .music-player .volume-slider input[type="range"] {
-        width: 75%;
-    }
 }
 
 @media (max-width: 480px) {
@@ -2040,16 +2041,24 @@ body[data-mode="neon"] .modal-content button:hover {
         text-align: center;
         padding-left: 0;
     }
+.music-player .song-info h4 {
+  font-size: 0.8rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  line-clamp: 1; /* Future-proof */
+}
 
-    .music-player .song-info h4 {
-        font-size: 0.8rem;
-        -webkit-line-clamp: 1;
-    }
-
-    .music-player .song-info p {
-        font-size: 0.65rem;
-        -webkit-line-clamp: 1;
-    }
+.music-player .song-info p {
+  font-size: 0.65rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  line-clamp: 1; /* Future-proof */
+}
+  
 
     .music-player .close-player-button,
     .music-player .minimize-player-button {
@@ -2063,7 +2072,8 @@ body[data-mode="neon"] .modal-content button:hover {
     .music-player .minimize-player-button { right: 0.3rem; }
 
     .music-player .player-buttons {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: center;
         gap: 0.3rem;
         margin-top: 0.3rem;
     }
@@ -2093,14 +2103,6 @@ body[data-mode="neon"] .modal-content button:hover {
         margin-top: -3px;
     }
 
-    .music-player .volume-slider {
-        margin-top: 0.3rem;
-    }
-
-    .music-player .volume-slider input[type="range"] {
-        width: 60%;
-    }
-
     .search-input-field {
         width: 98%;
     }
@@ -2113,5 +2115,17 @@ body[data-mode="neon"] .modal-content button:hover {
     .song-tile-thumbnail {
         width: 70px;
         height: 70px;
+    }
+
+    .music-player:not(.minimized) {
+        transform: translateY(0);
+    }
+
+    .music-player.minimized {
+        transform: translateY(calc(100% - 50px));
+    }
+
+    .music-player {
+        touch-action: manipulation;
     }
 }
