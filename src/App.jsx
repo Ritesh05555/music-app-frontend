@@ -3160,6 +3160,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import './index.css';
 library.add(fas);
 
 // --- Music Player Context ---
@@ -3625,14 +3626,19 @@ function MusicPlayer() {
                 {!isMinimized && (
                     <div className="controls">
                         <div className="time-display">{formatTime(currentTime)} / {formatTime(duration)}</div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={duration ? (currentTime / duration) * 100 : 0}
-                            onChange={handleTimeDrag}
-                            className="progress-bar"
-                        />
+                    <input
+    type="range"
+    min="0"
+    max="100"
+    value={duration ? (currentTime / duration) * 100 : 0}
+    onChange={handleTimeDrag}
+    className="progress-bar"
+    style={{
+        '--progress': duration
+            ? `${(currentTime / duration) * 100}%`
+            : '0%',
+    }}
+/>
                         <div className="player-buttons">
                             <button onClick={() => changeSong(-1)}><FontAwesomeIcon icon="fa-step-backward" /></button>
                             <button onClick={togglePlay}><FontAwesomeIcon icon={isPlaying ? 'fa-pause' : 'fa-play'} /></button>

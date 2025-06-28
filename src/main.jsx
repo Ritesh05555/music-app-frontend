@@ -13,11 +13,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // For React 18+
 import App from './App.jsx'; // Or wherever your main App component is
-import './index.css'; // If you have global CSS
+ // If you have global CSS
+
 
 // For React 18+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-);
+)
