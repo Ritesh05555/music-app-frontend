@@ -1,3 +1,5 @@
+
+
 // import React, { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
 // import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 // import axios from 'axios';
@@ -7,6 +9,7 @@
 // import './index.css';
 // library.add(fas);
 
+// // --- Music Player Context ---
 // // --- Music Player Context ---
 // const MusicPlayerContext = createContext();
 
@@ -273,14 +276,30 @@
 //     return children;
 // }
 
+// // --- PublicRoute for /login ---
+// function PublicRoute({ children }) {
+//     const { user, loading } = useAuth();
+//     if (loading) return <div className="loading"><div></div></div>;
+//     if (user) return <Navigate to="/main" replace />;
+//     return children;
+// }
+
 // // --- Components ---
 
 // function SplashScreen() {
 //     const navigate = useNavigate();
+//     const { user, loading } = useAuth();
+
 //     useEffect(() => {
-//         const timer = setTimeout(() => navigate('/login'), 3000);
+//         // If loading, wait for auth check
+//         if (loading) return;
+//         // If user is already logged in, go to main, else go to login
+//         const timer = setTimeout(() => {
+//             if (user) navigate('/main');
+//             else navigate('/login');
+//         }, 2000);
 //         return () => clearTimeout(timer);
-//     }, [navigate]);
+//     }, [navigate, user, loading]);
 //     return (
 //         <div className="splash-screen">
 //             <h1>SunDhun</h1>
@@ -294,9 +313,16 @@
 //     const [password, setPassword] = useState('');
 //     const [fullName, setFullName] = useState('');
 //     const [loading, setLoading] = useState(false);
-//     const { login } = useAuth();
+//     const { login, user } = useAuth();
 //     const navigate = useNavigate();
 //     const [message, setMessage] = useState('');
+
+//     // Redirect if already logged in
+//     useEffect(() => {
+//         if (user) {
+//             navigate('/main', { replace: true });
+//         }
+//     }, [user, navigate]);
 
 //     const handleSubmit = async (e) => {
 //         e.preventDefault();
@@ -1030,7 +1056,6 @@
 // }
 
 // // --- Main App Component ---
-
 // function App() {
 //     return (
 //         <Router>
@@ -1039,7 +1064,7 @@
 //                     <PlaylistProvider>
 //                         <Routes>
 //                             <Route path="/" element={<SplashScreen />} />
-//                             <Route path="/login" element={<AuthScreen />} />
+//                             <Route path="/login" element={<PublicRoute><AuthScreen /></PublicRoute>} />
 //                             <Route path="/main" element={<ProtectedRoute><MainScreen /></ProtectedRoute>} />
 //                             <Route path="/search" element={<ProtectedRoute><SearchScreen /></ProtectedRoute>} />
 //                             <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
@@ -1057,7 +1082,6 @@
 
 // export default App;
 
-
 import React, { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -1068,7 +1092,6 @@ import './index.css';
 library.add(fas);
 
 // --- Music Player Context ---
-// --- Music Player Context ---
 const MusicPlayerContext = createContext();
 
 function MusicPlayerProvider({ children }) {
@@ -1076,11 +1099,10 @@ function MusicPlayerProvider({ children }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [volume, setVolume] = useState(0.5);
-    const [isMinimized, setIsMinimized] = useState(true); // Start minimized
+    const [isMinimized, setIsMinimized] = useState(true);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const audioRef = useRef(null);
 
-    // Effect to handle maximizing the player when a new song is selected
     useEffect(() => {
         if (selectedSong) {
             setIsMinimized(false);
@@ -1132,7 +1154,7 @@ function MusicPlayerProvider({ children }) {
                 audioRef.current.removeEventListener('ended', () => {});
             }
         };
-    }, [selectedSong?._id, selectedSong?.audioUrl, isPlaying, volume]);
+    }, [selectedSong, isPlaying, volume, currentSongIndex]);
 
     const contextValue = {
         selectedSong, setSelectedSong, isPlaying, setIsPlaying,
@@ -1172,11 +1194,10 @@ function AuthProvider({ children }) {
             try {
                 const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
                 setUser(processUserData(res.data));
-            } catch (error) {
-                console.error('Auth error:', error);
+            } catch {
+                setUser(null);
                 localStorage.removeItem('token');
                 delete axios.defaults.headers.common['Authorization'];
-                setUser(null);
             }
         } else {
             setUser(null);
@@ -1207,14 +1228,17 @@ function AuthProvider({ children }) {
     const updateUser = async (userData) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
+            if (!token) return { success: false, message: 'No authentication token found.' };
+            await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setUser(processUserData(res.data));
+            await fetchUserProfile();
             return { success: true, message: 'Profile updated successfully!' };
         } catch (error) {
-            console.error('Failed to update profile:', error);
-            return { success: false, message: error.response?.data?.message || 'Failed to update profile.' };
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Server error. Please try again later.',
+            };
         }
     };
     
@@ -1290,7 +1314,7 @@ function PlaylistProvider({ children }) {
             console.error('Failed to create playlist:', error);
         }
     };
-
+    
     const removeSongFromPlaylist = async (songId, playlistId) => {
         try {
             const playlist = playlists.find(p => p._id === playlistId);
@@ -1327,6 +1351,7 @@ function usePlaylist() {
     return useContext(PlaylistContext);
 }
 
+// --- Route Components ---
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
     if (loading) return <div className="loading"><div></div></div>;
@@ -1334,7 +1359,6 @@ function ProtectedRoute({ children }) {
     return children;
 }
 
-// --- PublicRoute for /login ---
 function PublicRoute({ children }) {
     const { user, loading } = useAuth();
     if (loading) return <div className="loading"><div></div></div>;
@@ -1342,16 +1366,13 @@ function PublicRoute({ children }) {
     return children;
 }
 
-// --- Components ---
-
+// --- UI Components ---
 function SplashScreen() {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
     useEffect(() => {
-        // If loading, wait for auth check
         if (loading) return;
-        // If user is already logged in, go to main, else go to login
         const timer = setTimeout(() => {
             if (user) navigate('/main');
             else navigate('/login');
@@ -1370,12 +1391,12 @@ function AuthScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
+    const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
     const { login, user } = useAuth();
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
 
-    // Redirect if already logged in
     useEffect(() => {
         if (user) {
             navigate('/main', { replace: true });
@@ -1388,7 +1409,7 @@ function AuthScreen() {
         setMessage('');
         try {
             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
-            const data = isLogin ? { email, password } : { fullName, email, password };
+            const data = isLogin ? { email, password } : { fullName, email, password, phone };
             const res = await axios.post(endpoint, data);
             if (res.data.token && res.data.user) {
                 login(res.data.token, res.data.user, navigate);
@@ -1399,12 +1420,17 @@ function AuthScreen() {
             setLoading(false);
         }
     };
-
+    
     return (
         <div className="auth-screen">
             <form onSubmit={handleSubmit} className="auth-form">
                 <h2>{isLogin ? 'Login' : 'Signup'}</h2>
-                {!isLogin && <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" required />}
+                {!isLogin && (
+                    <>
+                        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" required />
+                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone Number" required />
+                    </>
+                )}
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
                 <button type="submit" disabled={loading}>{loading ? 'Processing...' : (isLogin ? 'Login' : 'Signup')}</button>
@@ -1472,7 +1498,7 @@ function Sidebar({ isOpen, onClose }) {
         const playlistName = prompt('Enter playlist name:');
         if (playlistName?.trim()) createPlaylist(playlistName.trim());
     };
-
+    
     return (
         <div ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
             <a href="/account" onClick={(e) => { e.preventDefault(); navigate('/account'); onClose(); }}>Account</a>
@@ -1554,19 +1580,19 @@ function MusicPlayer() {
                 {!isMinimized && (
                     <div className="controls">
                         <div className="time-display">{formatTime(currentTime)} / {formatTime(duration)}</div>
-                    <input
-    type="range"
-    min="0"
-    max="100"
-    value={duration ? (currentTime / duration) * 100 : 0}
-    onChange={handleTimeDrag}
-    className="progress-bar"
-    style={{
-        '--progress': duration
-            ? `${(currentTime / duration) * 100}%`
-            : '0%',
-    }}
-/>
+                        <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={duration ? (currentTime / duration) * 100 : 0}
+                            onChange={handleTimeDrag}
+                            className="progress-bar"
+                            style={{
+                                '--progress': duration
+                                    ? `${(currentTime / duration) * 100}%`
+                                    : '0%',
+                            }}
+                        />
                         <div className="player-buttons">
                             <button onClick={() => changeSong(-1)}><FontAwesomeIcon icon="fa-step-backward" /></button>
                             <button onClick={togglePlay}><FontAwesomeIcon icon={isPlaying ? 'fa-pause' : 'fa-play'} /></button>
@@ -1731,7 +1757,7 @@ function SearchScreen() {
     const [addMessage, setAddMessage] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const token = localStorage.getItem('token');
-
+    
     const debouncedSearch = useMemo(() => {
         let timeoutId;
         return (query) => {
@@ -1858,7 +1884,7 @@ function PlaylistDetailScreen() {
 
     if (loadingPlaylists) return <div className="content-area loading"><div></div></div>;
     if (!playlist) return <div className="content-area"><p>Playlist not found.</p></div>;
-
+    
     return (
         <div className="playlist-detail-screen" onClick={(e) => {
             if (!e.target.closest('.music-player')) {
@@ -1932,8 +1958,10 @@ function PlaylistDetailScreen() {
     );
 }
 
+// --- UPDATED CategorySongsScreen ---
 function CategorySongsScreen({ categoryType }) {
     const { name } = useParams();
+    const { user } = useAuth(); // Get user from context
     const { setSelectedSong, setIsPlaying, setIsMinimized } = useMusicPlayer();
     const { playlists, addToPlaylist, playlistSongIds, loadingPlaylists } = usePlaylist();
     const [songs, setSongs] = useState([]);
@@ -1945,30 +1973,35 @@ function CategorySongsScreen({ categoryType }) {
     const token = localStorage.getItem('token');
     const [randomMessage, setRandomMessage] = useState('');
     const [error, setError] = useState(null);
-
-    const loveMessages = ["Every note carries a heartbeat — feel the love."];
-    const travelMessages = ["Hit the road with the perfect travel tunes."];
-    const happyMessages = ["Turn up the joy — today feels just right."];
-    const sadMessages = ["It’s okay to feel — let the music hold you gently."];
-    const motivationalMessages = ["Fuel your fire. Let every beat push you further."];
-    const nostalgicMessages = ["A melody can take you back in time."];
-    const heartbreakMessages = ["Some songs just understand — let them."];
-    const spiritualMessages = ["Find peace in every chord."];
-    const calmMessages = ["Breathe easy with soothing tunes."];
     
+    // Personalized message templates
+    const messagesConfig = useMemo(() => ({
+        love: ["Hey ${username}, let your heart sing louder than words.", "${username}, fall in love with every note.", "Music for the moments when your heart races, ${username}.", "Wrap yourself in melodies of love, ${username}.", "${username}, let these tunes be your love letter."],
+        travel: ["Adventure awaits, ${username} — let the music guide you.", "Wanderlust in every beat, just for you ${username}.", "Hit the open road with these tunes, ${username}.", "${username}, let every song be a new destination.", "Pack your dreams and play these tracks, ${username}."],
+        happy: ["Smile wide, ${username} — these songs are your sunshine.", "Turn up the joy, ${username}, and dance like no one's watching.", "${username}, happiness is just a beat away.", "Celebrate today with these tunes, ${username}.", "Life's better with music and you in it, ${username}."],
+        sad: ["It's okay to feel, ${username} — let these songs hold you.", "Lean on these melodies, ${username}, when words aren't enough.", "${username}, find gentle comfort in every note.", "Let your tears fall freely with these tracks, ${username}.", "Soft songs for heavy hearts, just for you ${username}."],
+        motivational: ["Rise and conquer, ${username} — let the music push you.", "Fuel your fire, ${username}, one beat at a time.", "${username}, chase your dreams with these power tunes.", "No limits for you, ${username} — feel the energy.", "Crush every goal with these tracks, ${username}."],
+        nostalgic: ["A trip down memory lane for you, ${username}.", "Relive the golden days with these songs, ${username}.", "${username}, let these melodies take you back.", "Old memories, new feelings — enjoy them, ${username}.", "Time travel through music, just for you ${username}."],
+        heartbreak: ["Some songs understand you better than words, ${username}.", "Let it all out, ${username} — these tracks feel your pain.", "${username}, heal one verse at a time.", "Mend your heart with these honest melodies, ${username}.", "It's okay to break, ${username} — music will hold you."],
+        spiritual: ["Find your center, ${username}, in every chord.", "Breathe deeply with these mindful tunes, ${username}.", "${username}, let the music elevate your spirit.", "Harmony for the soul — just for you, ${username}.", "Feel peace wash over you, ${username}, with every note."],
+        calm: ["Slow down, ${username} — breathe with these soothing sounds.", "Ease your mind, ${username}, with gentle melodies.", "Quiet moments made perfect for you, ${username}.", "${username}, relax — let the calm in.", "Soft notes for softer days, just for you ${username}."],
+        rap: ["Spit fire, ${username}, let the beats talk.", "Get in the zone with these bars, ${username}.", "Powerful words for a powerful ${username}.", "Vibe with raw energy, ${username}.", "${username}, own the mic with these tracks."],
+        party: ["Let's turn it up, ${username} — the party starts here.", "${username}, dance like nobody's watching.", "Good vibes and wild nights just for you, ${username}.", "Hit the floor with these beats, ${username}.", "Bring the energy, ${username}, let’s go!"],
+        classical: ["Timeless beauty in every note for you, ${username}.", "Close your eyes and let it flow, ${username}.", "Elegance and grace in sound, just for you ${username}.", "${username}, feel every movement and melody.", "For the refined listener — you, ${username}."],
+        'lo-fi': ["Chill out, ${username}, with these mellow beats.", "Your perfect study companion, ${username}.", "Lo-fi vibes to calm your mind, ${username}.", "Soft beats for deep thoughts, just for you ${username}.", "${username}, relax — let the loops take over."]
+    }), []);
+
     useEffect(() => {
-        const messageMap = {
-            love: loveMessages, travel: travelMessages, happy: happyMessages, sad: sadMessages,
-            motivational: motivationalMessages, nostalgic: nostalgicMessages,
-            heartbreak: heartbreakMessages, spiritual: spiritualMessages, calm: calmMessages,
-        };
-        const messages = messageMap[name] || [];
+        const firstName = user?.fullName?.split(' ')[0] || 'friend';
+        const messages = messagesConfig[name] || [];
         if (messages.length > 0 && songs.length > 0) {
-            setRandomMessage(messages[Math.floor(Math.random() * messages.length)]);
+            const randomTemplate = messages[Math.floor(Math.random() * messages.length)];
+            const personalizedMessage = randomTemplate.replace(/\$\{username\}/g, firstName);
+            setRandomMessage(personalizedMessage);
             const timer = setTimeout(() => setRandomMessage(''), 4000);
             return () => clearTimeout(timer);
         }
-    }, [name, songs]);
+    }, [name, songs, user, messagesConfig]);
 
     useEffect(() => {
         setLoading(true);
@@ -1986,7 +2019,7 @@ function CategorySongsScreen({ categoryType }) {
             })
             .finally(() => setLoading(false));
     }, [name, categoryType, token]);
-
+    
     const handleAddToPlaylist = (songId) => {
         setSongToAdd(songId);
         setShowPlaylistModal(true);
@@ -2041,32 +2074,64 @@ function CategorySongsScreen({ categoryType }) {
     );
 }
 
+
 function Account() {
     const { user, updateUser, loading } = useAuth();
     const { setIsMinimized } = useMusicPlayer();
     const [message, setMessage] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [editProfileOpen, setEditProfileOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [newFullName, setNewFullName] = useState('');
 
     useEffect(() => {
-        if (user) { setNewFullName(user.fullName); }
+        if (user?.fullName) setNewFullName(user.fullName);
     }, [user]);
-    
-    const handleEditProfile = () => { setEditProfileOpen(true); };
 
-    const saveProfile = async () => {
-        if (newFullName.trim() && newFullName !== user.fullName) {
-            const result = await updateUser({ fullName: newFullName.trim() });
-            setMessage(result.message);
-            setTimeout(() => setMessage(''), 3000);
-        } else {
-            setMessage('Full name cannot be empty or the same.');
-            setTimeout(() => setMessage(''), 3000);
+    const handleEditProfile = () => {
+        if (user?.fullName) {
+            setNewFullName(user.fullName);
+            setEditProfileOpen(true);
         }
-        setEditProfileOpen(false);
     };
     
+    const saveProfile = async () => {
+        if (!newFullName.trim()) {
+            setMessage("Full name cannot be empty.");
+            setTimeout(() => setMessage(""), 3000);
+            return;
+        }
+        if (newFullName.trim() === user.fullName) {
+            setMessage("The new name is the same as the old one.");
+            setTimeout(() => setMessage(""), 3000);
+            setEditProfileOpen(false);
+            return;
+        }
+        setIsSaving(true);
+        setMessage("");
+        try {
+            const result = await updateUser({ fullName: newFullName.trim() });
+            setMessage(result.message);
+            if (result.success) setEditProfileOpen(false);
+        } catch {
+            setMessage("An unexpected error occurred.");
+        } finally {
+            setIsSaving(false);
+            setTimeout(() => setMessage(""), 3000);
+        }
+    };
+
+    const formatJoinDate = (joinDate) => {
+        if (!joinDate) return "N/A";
+        if (typeof joinDate === "string" || typeof joinDate === "number") {
+            return new Date(joinDate).toLocaleDateString();
+        }
+        if (joinDate instanceof Date) {
+            return joinDate.toLocaleDateString();
+        }
+        return "N/A";
+    };
+
     return (
         <div className="account-screen" onClick={(e) => {
             if (!e.target.closest('.music-player')) {
@@ -2092,17 +2157,25 @@ function Account() {
                                 value={newFullName}
                                 onChange={(e) => setNewFullName(e.target.value)}
                                 placeholder="Enter new full name"
+                                disabled={isSaving}
                             />
-                            <button onClick={saveProfile}>Save</button>
-                            <button onClick={() => setEditProfileOpen(false)}>Cancel</button>
+                            <button onClick={saveProfile} disabled={isSaving}>
+                                {isSaving ? "Saving..." : "Save"}
+                            </button>
+                            <button onClick={() => setEditProfileOpen(false)} disabled={isSaving}>
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 )}
-                {loading ? ( <p>Loading profile...</p> ) 
-                : user ? (
+                {loading ? (
+                    <div className="loading"><div></div></div>
+                ) : user ? (
                     <>
-                        <p><strong>Full Name:</strong> {user.fullName}</p>
-                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Full Name:</strong> {user.fullName || "Not provided"}</p>
+                        <p><strong>Email:</strong> {user.email || "Not provided"}</p>
+                        <p><strong>Phone Number:</strong> {user.phone || "Not provided"}</p>
+                        <p><strong>Join Date:</strong> {formatJoinDate(user.joinDate)}</p>
                     </>
                 ) : (
                     <p>User data not available.</p>
@@ -2125,10 +2198,10 @@ function App() {
                             <Route path="/login" element={<PublicRoute><AuthScreen /></PublicRoute>} />
                             <Route path="/main" element={<ProtectedRoute><MainScreen /></ProtectedRoute>} />
                             <Route path="/search" element={<ProtectedRoute><SearchScreen /></ProtectedRoute>} />
-                            <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+                           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                             <Route path="/moods/:name" element={<ProtectedRoute><CategorySongsScreen categoryType="mood" /></ProtectedRoute>} />
                             <Route path="/genres/:name" element={<ProtectedRoute><CategorySongsScreen categoryType="genre" /></ProtectedRoute>} />
-                            <Route path="/playlist/:playlistId" element={<ProtectedRoute><PlaylistDetailScreen /></ProtectedRoute>} />
+                           <Route path="/playlist/:playlistId" element={<ProtectedRoute><PlaylistDetailScreen /></ProtectedRoute>} />
                             <Route path="*" element={<ProtectedRoute><Navigate to="/main" replace /></ProtectedRoute>} />
                         </Routes>
                     </PlaylistProvider>

@@ -2005,15 +2005,25 @@ body[data-mode="neon"] .random-message {
         padding-left: 0;
     }
 
-    .music-player .song-info h4 {
-        font-size: 0.75rem;
-        -webkit-line-clamp: 1;
-    }
+  .music-player .song-info h4 {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; /* standard property */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-    .music-player .song-info p {
-        font-size: 0.6rem;
-        -webkit-line-clamp: 1;
-    }
+.music-player .song-info p {
+    font-size: 0.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; /* standard property */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
     .music-player .close-player-button,
     .music-player .minimize-player-button {
