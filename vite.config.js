@@ -1,13 +1,6 @@
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// // https://vite.dev/config/
-// export default defineConfig({
-//   plugins: [react()],
-// })
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
@@ -33,9 +26,12 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png'
           }
-       
         ]
+      },
+      workbox: {
+        skipWaiting: true,
+        clientsClaim: true, // activate immediately without waiting
       }
     })
   ]
-})
+});
