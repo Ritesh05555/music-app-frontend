@@ -1256,7 +1256,7 @@ function AuthProvider({ children }) {
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
-                const res = await axios.get('https://music-backend-akb5.onrender.com /api/user/profile');
+                const res = await axios.get('https://music-backend-akb5.onrender.com/api/user/profile');
                 setUser(processUserData(res.data));
             } catch {
                 setUser(null);
@@ -1293,7 +1293,7 @@ function AuthProvider({ children }) {
         try {
             const token = localStorage.getItem('token');
             if (!token) return { success: false, message: 'No authentication token found.' };
-            await axios.put('https://music-backend-akb5.onrender.com /api/user/profile', userData, {
+            await axios.put('https://music-backend-akb5.onrender.com/api/user/profile', userData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             await fetchUserProfile();
@@ -1335,7 +1335,7 @@ function PlaylistProvider({ children }) {
         }
         setLoadingPlaylists(true);
         try {
-            const res = await axios.get('https://music-backend-akb5.onrender.com /api/playlists', {
+            const res = await axios.get('https://music-backend-akb5.onrender.com/api/playlists', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const fetchedPlaylists = res.data || [];
@@ -1361,7 +1361,7 @@ function PlaylistProvider({ children }) {
                 return { success: false, message: 'Song already in playlist' };
             }
             const updatedSongs = [...(playlist.songs.map(s => s._id)), songId];
-            await axios.put(`https://music-backend-akb5.onrender.com /api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Song added to playlist!' };
         } catch (err) {
@@ -1372,7 +1372,7 @@ function PlaylistProvider({ children }) {
 
     const createPlaylist = async (name) => {
         try {
-            await axios.post('https://music-backend-akb5.onrender.com /api/playlists', { name: name }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.post('https://music-backend-akb5.onrender.com/api/playlists', { name: name }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Playlist created!' };
         } catch (error) {
@@ -1385,7 +1385,7 @@ function PlaylistProvider({ children }) {
         try {
             const playlist = playlists.find(p => p._id === playlistId);
             const updatedSongs = playlist.songs.filter(s => s._id !== songId).map(s => s._id);
-            await axios.put(`https://music-backend-akb5.onrender.com /api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { songs: updatedSongs }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Song removed successfully!' };
         } catch (error) {
@@ -1396,7 +1396,7 @@ function PlaylistProvider({ children }) {
 
     const updatePlaylistName = async (playlistId, newName) => {
         try {
-            await axios.put(`https://music-backend-akb5.onrender.com /api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`https://music-backend-akb5.onrender.com/api/playlists/${playlistId}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
             await fetchPlaylists();
             return { success: true, message: 'Playlist updated!' };
         } catch (error) {
@@ -1474,7 +1474,7 @@ function AuthScreen() {
         setLoading(true);
         setMessage('');
         try {
-            const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com /api/auth/login' : 'https://music-backend-akb5.onrender.com /api/auth/register';
+            const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com /api/auth/register';
             const data = isLogin ? { email, password } : { fullName, email, password, phone };
             const res = await axios.post(endpoint, data);
             if (res.data.token && res.data.user) {
@@ -1849,7 +1849,7 @@ function RequestSongModal({ isOpen, onClose }) {
 
     setLoading(true);
     try {
-      await axios.post('https://music-backend-akb5.onrender.com /api/song-requests', validRequests, {
+      await axios.post('https://music-backend-akb5.onrender.com/api/song-requests', validRequests, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // On success, update state to show success message and start timer to close
@@ -2037,7 +2037,7 @@ function SearchScreen({ openRequestModal }) {
             timeoutId = setTimeout(async () => {
                 setLoadingSearch(true);
                 try {
-                    const url = `https://music-backend-akb5.onrender.com /api/songs?search=${encodeURIComponent(query.trim())}`;
+                    const url = `https://music-backend-akb5.onrender.com/api/songs?search=${encodeURIComponent(query.trim())}`;
                     const res = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
                     setSearchResults(Array.isArray(res.data) ? res.data : []);
                 } catch (error) {
@@ -2387,7 +2387,7 @@ useEffect(() => {
             setLoading(false);
             return;
         }
-        axios.get(`https://music-backend-akb5.onrender.com /api/songs?${categoryType}=${encodeURIComponent(name)}`, {
+        axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${encodeURIComponent(name)}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
