@@ -337,7 +337,7 @@
 //         setLoading(true);
 //         setMessage('');
 //         try {
-//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com /api/auth/register';
+//             const endpoint = isLogin ? 'https://music-backend-akb5.onrender.com/api/auth/login' : 'https://music-backend-akb5.onrender.com/api/auth/register';
 //             const data = isLogin ? { email, password } : { fullName, email, password, phone };
 //             const res = await axios.post(endpoint, data);
 //             if (res.data.token && res.data.user) {
@@ -386,7 +386,6 @@
 //     );
 // }
 
-
 // function Sidebar({ isOpen, onClose, onRequestSongOpen }) {
 //     const navigate = useNavigate();
 //     const { user, logout } = useAuth();
@@ -403,7 +402,7 @@
 //                 isOpen &&
 //                 sidebarRef.current &&
 //                 !sidebarRef.current.contains(event.target) &&
-//                 !event.target.closest('.sidebar-toggle') // Exclude ☰ toggle button
+//                 !event.target.closest('.sidebar-toggle')
 //             ) {
 //                 onClose();
 //                 setShowModeDropdown(false);
@@ -446,7 +445,6 @@
 //     return (
 //         <div ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
 //             <a href="/account" onClick={(e) => { e.preventDefault(); navigate('/account'); onClose(); }}>Account</a>
-
 //             <div className="sidebar-item-with-dropdown">
 //                 <a href="#" onClick={(e) => { e.preventDefault(); setShowModeDropdown((prev) => !prev); }}>Mode</a>
 //                 {showModeDropdown && (
@@ -457,7 +455,6 @@
 //                     </div>
 //                 )}
 //             </div>
-
 //             <a href="#" onClick={(e) => { e.preventDefault(); setShowPlaylistDropdown(!showPlaylistDropdown); }}>Playlist</a>
 //             {showPlaylistDropdown && (
 //                 <div className="playlist-dropdown">
@@ -475,16 +472,13 @@
 //                     )}
 //                 </div>
 //             )}
-
 //             <a href="#" onClick={(e) => { e.preventDefault(); onRequestSongOpen(); onClose(); }}>Request a Song</a>
-
 //             {user && (
 //                 <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Logout</a>
 //             )}
 //         </div>
 //     );
 // }
-
 
 // function MusicPlayer() {
 //     const {
@@ -659,215 +653,347 @@
 // }
 
 // function RequestSongModal({ isOpen, onClose }) {
-//   const [requests, setRequests] = useState([{ title: '', movie: '' }]);
-//   const [loading, setLoading] = useState(false);
-//   const [message, setMessage] = useState('');
-//   const [isSuccess, setIsSuccess] = useState(false); // New state for success
-//   const token = localStorage.getItem('token');
+//     const [requests, setRequests] = useState([{ title: '', movie: '' }]);
+//     const [loading, setLoading] = useState(false);
+//     const [message, setMessage] = useState('');
+//     const [isSuccess, setIsSuccess] = useState(false);
+//     const token = localStorage.getItem('token');
 
-//   // Reset state when modal opens
-//   useEffect(() => {
-//     if (isOpen) {
-//       setRequests([{ title: '', movie: '' }]);
-//       setMessage('');
-//       setLoading(false);
-//       setIsSuccess(false); // Reset success state
-//     }
-//   }, [isOpen]);
+//     useEffect(() => {
+//         if (isOpen) {
+//             setRequests([{ title: '', movie: '' }]);
+//             setMessage('');
+//             setLoading(false);
+//             setIsSuccess(false);
+//         }
+//     }, [isOpen]);
 
-//   const handleRequestChange = (index, field, value) => {
-//     const newRequests = [...requests];
-//     newRequests[index][field] = value;
-//     setRequests(newRequests);
-//   };
+//     const handleRequestChange = (index, field, value) => {
+//         const newRequests = [...requests];
+//         newRequests[index][field] = value;
+//         setRequests(newRequests);
+//     };
 
-//   const handleAddRequest = () => {
-//     if (requests.length < 5) {
-//       setRequests([...requests, { title: '', movie: '' }]);
-//     }
-//   };
+//     const handleAddRequest = () => {
+//         if (requests.length < 5) {
+//             setRequests([...requests, { title: '', movie: '' }]);
+//         }
+//     };
 
-//   const handleRemoveRequest = (index) => {
-//     if (requests.length > 1) {
-//       const newRequests = requests.filter((_, i) => i !== index);
-//       setRequests(newRequests);
-//     }
-//   };
+//     const handleRemoveRequest = (index) => {
+//         if (requests.length > 1) {
+//             const newRequests = requests.filter((_, i) => i !== index);
+//             setRequests(newRequests);
+//         }
+//     };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setMessage('');
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         setMessage('');
 
-//     const validRequests = requests.filter(req => req.title.trim() && req.movie.trim());
+//         const validRequests = requests.filter(req => req.title.trim() && req.movie.trim());
 
-//     if (validRequests.length === 0) {
-//       setMessage('Please fill out at least one complete song request.');
-//       return;
-//     }
+//         if (validRequests.length === 0) {
+//             setMessage('Please fill out at least one complete song request.');
+//             return;
+//         }
 
-//     if (validRequests.length !== requests.filter(r => r.title.trim() || r.movie.trim()).length) {
-//         setMessage('Please fill out both song title and movie/album for each request line.');
-//         return;
-//     }
+//         if (validRequests.length !== requests.filter(r => r.title.trim() || r.movie.trim()).length) {
+//             setMessage('Please fill out both song title and movie/album for each request line.');
+//             return;
+//         }
 
-//     setLoading(true);
-//     try {
-//       await axios.post('https://music-backend-akb5.onrender.com/api/song-requests', validRequests, {
-//         headers: { Authorization: `Bearer ${token}` }
-//       });
-//       // On success, update state to show success message and start timer to close
-//       setLoading(false);
-//       setIsSuccess(true);
-//       setMessage('Your requests have been submitted successfully!');
-      
-//       // Close the modal after 1 second
-//       setTimeout(() => {
-//         onClose();
-//       }, 1000);
-
-//     } catch (error) {
-//       // On error, just show the error message and stop loading
-//       setLoading(false);
-//       setMessage(error.response?.data?.message || 'Failed to submit requests. Please try again.');
-//     }
-//   };
-
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="request-song-modal-overlay" onClick={onClose}>
-//       <div className="request-song-modal" onClick={(e) => e.stopPropagation()}>
-//         {isSuccess ? (
-//           // Success View
-//           <div className="request-success-view">
-//               <FontAwesomeIcon icon="fa-check-circle" style={{fontSize: '3rem', color: '#4caf50', marginBottom: '1rem'}}/>
-//               <h3>Success!</h3>
-//               <p>{message}</p>
-//           </div>
-//         ) : (
-//           // Form View
-//           <>
-//             <h3 className="request-song-modal-header">Request a Song</h3>
-//             <p className="request-song-modal-subheader">You can request up to 5 songs.</p>
+//         setLoading(true);
+//         try {
+//             await axios.post('https://music-backend-akb5.onrender.com/api/song-requests', validRequests, {
+//                 headers: { Authorization: `Bearer ${token}` }
+//             });
+//             setLoading(false);
+//             setIsSuccess(true);
+//             setMessage('Your requests have been submitted successfully!');
             
-//             <form onSubmit={handleSubmit}>
-//               <div className="request-list">
-//                 {requests.map((req, index) => (
-//                   <div key={index} className="request-item">
-//                     <input
-//                       type="text"
-//                       placeholder="Song Title"
-//                       value={req.title}
-//                       onChange={(e) => handleRequestChange(index, 'title', e.target.value)}
-//                       className="request-input"
-//                       required
-//                     />
-//                     <input
-//                       type="text"
-//                       placeholder="Movie / Album"
-//                       value={req.movie}
-//                       onChange={(e) => handleRequestChange(index, 'movie', e.target.value)}
-//                       className="request-input"
-//                       required
-//                     />
-//                     <button
-//                       type="button"
-//                       onClick={() => handleRemoveRequest(index)}
-//                       className="remove-request-btn"
-//                       disabled={requests.length <= 1 || loading}
-//                       title="Remove request"
-//                     >
-//                       <FontAwesomeIcon icon="fa-times" />
-//                     </button>
-//                   </div>
-//                 ))}
-//               </div>
+//             setTimeout(() => {
+//                 onClose();
+//             }, 1000);
+//         } catch (error) {
+//             setLoading(false);
+//             setMessage(error.response?.data?.message || 'Failed to submit requests. Please try again.');
+//         }
+//     };
 
-//               <div className="request-song-actions">
-//                 <button
-//                   type="button"
-//                   onClick={handleAddRequest}
-//                   className="add-request-btn"
-//                   disabled={requests.length >= 5 || loading}
-//                 >
-//                   <FontAwesomeIcon icon="fa-plus" /> Add another
-//                 </button>
-                
-//                 <button
-//                   type="submit"
-//                   className="submit-requests-btn"
-//                   disabled={loading}
-//                 >
-//                   {loading ? 'Submitting...' : 'Submit Requests'}
-//                 </button>
-//               </div>
+//     if (!isOpen) return null;
 
-//               <div className="request-song-modal-footer">
-//                 {message && <div className="request-modal-message">{message}</div>}
-//                 <button type="button" className="request-modal-cancel" onClick={onClose} disabled={loading}>
-//                   Cancel
-//                 </button>
-//               </div>
-//             </form>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
+//     return (
+//         <div className="request-song-modal-overlay" onClick={onClose}>
+//             <div className="request-song-modal" onClick={(e) => e.stopPropagation()}>
+//                 {isSuccess ? (
+//                     <div className="request-success-view">
+//                         <FontAwesomeIcon icon="fa-check-circle" style={{fontSize: '3rem', color: '#4caf50', marginBottom: '1rem'}}/>
+//                         <h3>Success!</h3>
+//                         <p>{message}</p>
+//                     </div>
+//                 ) : (
+//                     <>
+//                         <h3 className="request-song-modal-header">Request a Song</h3>
+//                         <p className="request-song-modal-subheader">You can request up to 5 songs.</p>
+//                         <form onSubmit={handleSubmit}>
+//                             <div className="request-list">
+//                                 {requests.map((req, index) => (
+//                                     <div key={index} className="request-item">
+//                                         <input
+//                                             type="text"
+//                                             placeholder="Song Title"
+//                                             value={req.title}
+//                                             onChange={(e) => handleRequestChange(index, 'title', e.target.value)}
+//                                             className="request-input"
+//                                             required
+//                                         />
+//                                         <input
+//                                             type="text"
+//                                             placeholder="Movie / Album"
+//                                             value={req.movie}
+//                                             onChange={(e) => handleRequestChange(index, 'movie', e.target.value)}
+//                                             className="request-input"
+//                                             required
+//                                         />
+//                                         <button
+//                                             type="button"
+//                                             onClick={() => handleRemoveRequest(index)}
+//                                             className="remove-request-btn"
+//                                             disabled={requests.length <= 1 || loading}
+//                                             title="Remove request"
+//                                         >
+//                                             <FontAwesomeIcon icon="fa-times" />
+//                                         </button>
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                             <div className="request-song-actions">
+//                                 <button
+//                                     type="button"
+//                                     onClick={handleAddRequest}
+//                                     className="add-request-btn"
+//                                     disabled={requests.length >= 5 || loading}
+//                                 >
+//                                     <FontAwesomeIcon icon="fa-plus" /> Add another
+//                                 </button>
+//                                 <button
+//                                     type="submit"
+//                                     className="submit-requests-btn"
+//                                     disabled={loading}
+//                                 >
+//                                     {loading ? 'Submitting...' : 'Submit Requests'}
+//                                 </button>
+//                             </div>
+//                             <div className="request-song-modal-footer">
+//                                 {message && <div className="request-modal-message">{message}</div>}
+//                                 <button type="button" className="request-modal-cancel" onClick={onClose} disabled={loading}>
+//                                     Cancel
+//                                 </button>
+//                             </div>
+//                         </form>
+//                     </>
+//                 )}
+//             </div>
+//         </div>
+//     );
 // }
 
 
 // function MainScreen({ openRequestModal }) {
-//     const { user } = useAuth();
-//     const { setIsMinimized } = useMusicPlayer();
-//     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-//     const [showWelcome, setShowWelcome] = useState(false);
-//     const navigate = useNavigate();
+//   const { user } = useAuth();
+//   const { setIsMinimized } = useMusicPlayer();
+//   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+//   const [showWelcome, setShowWelcome] = useState(false);
+//   const navigate = useNavigate();
 
-//     useEffect(() => {
-//         if (sessionStorage.getItem('showWelcome')) {
-//             setShowWelcome(true);
-//             const timer = setTimeout(() => {
-//                 setShowWelcome(false);
-//                 sessionStorage.removeItem('showWelcome');
-//             }, 2500);
-//             return () => clearTimeout(timer);
-//         }
-//     }, [user]);
+//   const singersContainerRef = useRef(null);
 
-//     const moodCategories = ['happy', 'sad', 'love', 'motivational', 'nostalgic', 'heartbreak', 'spiritual', 'travel'];
-//     const genreCategories = ['rap', 'party', 'classical', 'lo-fi'];
+//   // Track visibility of scroll buttons
+//   const [showPrev, setShowPrev] = useState(false);
+//   const [showNext, setShowNext] = useState(true); // Initially assume there are more items
 
-//     return (
-//         <div className="main-screen">
-//             {showWelcome && user && <div className="welcome-overlay">Welcome, {user.fullName.split(' ')[0]}!</div>}
-//             <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-//             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onRequestSongOpen={openRequestModal} />
-//             <div className="content-area">
-//                 <section className="mood-section">
-//                     <h2>Moods</h2>
-//                     <div className="mood-cards">
-//                         {moodCategories.map((m) => (
-//                             <div key={m} className={`mood-card ${m}`} onClick={() => navigate(`/moods/${m}`)}>
-//                                 <h3>{m}</h3>
-//                             </div>
-//                         ))}
-//                     </div>
-//                 </section>
-//                 <section className="genre-section">
-//                     <h2>Genres</h2>
-//                     <div className="mood-cards">
-//                         {genreCategories.map((g) => (
-//                             <div key={g} className={`mood-card ${g}`} onClick={() => navigate(`/genres/${g}`)}>
-//                                 <h3>{g}</h3>
-//                             </div>
-//                         ))}
-//                     </div>
-//                 </section>
-//             </div>
-//             <MusicPlayer />
+//   useEffect(() => {
+//     if (sessionStorage.getItem('showWelcome')) {
+//       setShowWelcome(true);
+//       const timer = setTimeout(() => {
+//         setShowWelcome(false);
+//         sessionStorage.removeItem('showWelcome');
+//       }, 2500); // Smooth fade-out after 2.5s
+//       return () => clearTimeout(timer);
+//     }
+//   }, [user]);
+
+//   // Handle scroll and update button visibility
+//   useEffect(() => {
+//     const container = singersContainerRef.current;
+//     if (!container) return;
+
+//     const handleScroll = () => {
+//       const { scrollLeft, scrollWidth, clientWidth } = container;
+//       setShowPrev(scrollLeft > 0);
+//       setShowNext(scrollLeft < scrollWidth - clientWidth - 1); // small buffer for precision
+//     };
+
+//     // Initial check
+//     handleScroll();
+
+//     container.addEventListener('scroll', handleScroll);
+//     return () => container.removeEventListener('scroll', handleScroll);
+//   }, []);
+
+//   const moodCategories = ['happy', 'sad', 'love', 'motivational', 'nostalgic', 'heartbreak', 'spiritual', 'travel'];
+
+//   const singers = [
+//     { name: '', id: 'sonu nigam', imageFileName: 'sonu.png' },
+//     { name: '', id: 'lata mangeshkar', imageFileName: 'lata.png' },
+     
+//      { name: '', id: 'kk', imageFileName: 'kk.png' },
+//     { name: '', id: 'mohd rafi', imageFileName: 'rafi.png' },
+//     { name: '', id: 'arijit singh', imageFileName: 'arjit.png' },
+//     { name: '', id: 'neha kakkar', imageFileName: 'neha.png' },
+//     { name: '', id: 'kishore kumar', imageFileName: 'kishor.png' },
+//     { name: '', id: 'anirudh', imageFileName: 'ani.png' },
+//     { name: '', id: 'nusrat fateh ali khan', imageFileName: 'nusrat.jpg' },
+//     { name: '', id: 'diljit dosanjh', imageFileName: 'diljit.png' },
+//   { name: '', id: 'jubin nautiyal', imageFileName: 'jubin.jpg' },
+//     { name: '', id: 'shreya ghoshal', imageFileName: 'sherya.png' },
+    
+//   ];
+//   const genres = [
+//     { name: '', id: 'rap', imageFileName: 'rap.jpg' },
+//     { name: '', id: 'classical', imageFileName: 'class.png' },
+//     { name: '', id: 'party', imageFileName: 'party.jpg' },
+//     { name: '', id: 'lo-fi', imageFileName: 'lofi.jpg' },
+//   ];
+
+//   const scrollSingers = (direction) => {
+//     if (singersContainerRef.current) {
+//       const scrollAmount = direction === 'right' ? 400 : -400;
+//       singersContainerRef.current.scrollBy({
+//         left: scrollAmount,
+//         behavior: 'smooth',
+//       });
+
+//       // After scrolling, update button states
+//       setTimeout(() => {
+//         const container = singersContainerRef.current;
+//         const { scrollLeft, scrollWidth, clientWidth } = container;
+//         setShowPrev(scrollLeft > 0);
+//         setShowNext(scrollLeft < scrollWidth - clientWidth - 1);
+//       }, 300);
+//     }
+//   };
+
+//   const handleSingerClick = (singerId) => {
+//     navigate(`/singers/${encodeURIComponent(singerId)}`);
+//   };
+
+//   const handleGenreClick = (genreId) => {
+//     navigate(`/genres/${encodeURIComponent(genreId)}`);
+//   };
+
+//   return (
+//     <div className="main-screen">
+//       {/* Welcome Overlay */}
+//       {showWelcome && user && (
+//         <div className="welcome-overlay fade-in-out">
+//           Welcome, {user.fullName.split(' ')[0]}!
 //         </div>
-//     );
+//       )}
+
+//       <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+//       <Sidebar
+//         isOpen={isSidebarOpen}
+//         onClose={() => setIsSidebarOpen(false)}
+//         onRequestSongOpen={openRequestModal}
+//       />
+
+//       <div className="content-area">
+//         {/* 🎤 Singers Section */}
+//         <section className="singers-section">
+//           <h2>Artist Spotlight</h2>
+//           <div className="singers-container">
+//             <div className="singers-scroll" ref={singersContainerRef}>
+//               {singers.map((singer) => (
+//                 <div
+//                   key={singer.id}
+//                   className="singer-card"
+//                   onClick={() => handleSingerClick(singer.id)}
+//                 >
+//                   <img
+//                     src={`/singers/${singer.imageFileName}`}
+//                     alt={singer.name}
+//                     className="singer-card-image fade-in"
+//                     loading="lazy"
+//                   />
+//                   <h3>{singer.name}</h3>
+//                 </div>
+//               ))}
+//             </div>
+
+//             {/* Conditional Buttons */}
+//             {showPrev && (
+//               <button
+//                 className="singers-scroll-btn left"
+//                 onClick={() => scrollSingers('left')}
+//               >
+//                 <FontAwesomeIcon icon="fa-chevron-left" />
+//               </button>
+//             )}
+//             {showNext && (
+//               <button
+//                 className="singers-scroll-btn right"
+//                 onClick={() => scrollSingers('right')}
+//               >
+//                 <FontAwesomeIcon icon="fa-chevron-right" />
+//               </button>
+//             )}
+//           </div>
+//         </section>
+
+//         {/* 🎵 Mood Section */}
+//         <section className="mood-section">
+//           <h2>Moods</h2>
+//           <div className="mood-cards">
+//             {moodCategories.map((m) => (
+//               <div
+//                 key={m}
+//                 className={`mood-card ${m}`}
+//                 onClick={() => navigate(`/moods/${m}`)}
+//               >
+//                 <h3>{m}</h3>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+
+//         {/* 🎧 Genre Section */}
+//         <section className="genre-section">
+//           <h2>Genres</h2>
+//           <div className="genres-cards">
+//             {genres.map((genre) => (
+//               <div
+//                 key={genre.id}
+//                 className="genre-card"
+//                 onClick={() => handleGenreClick(genre.id)}
+//               >
+//                 <img
+//                   src={`/genres/${genre.imageFileName}`}
+//                   alt={genre.name}
+//                   className="genre-card-image fade-in"
+//                   loading="lazy"
+//                 />
+//                 <h3>{genre.name}</h3>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       </div>
+
+//       <MusicPlayer />
+//     </div>
+//   );
 // }
 
 // function SearchScreen({ openRequestModal }) {
@@ -1043,7 +1169,7 @@
 //                         value={searchQuery}
 //                         onChange={(e) => setSearchQuery(e.target.value)}
 //                         className="search-input-field w-full p-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                         placeholder="Search by title, singer, mood, genre, movie..."
+//                         placeholder="Search by title, singer, mood,movie.."
 //                         autoFocus
 //                     />
 //                     <button
@@ -1105,6 +1231,7 @@
 //         setMessage(result.message);
 //         setTimeout(() => setMessage(''), 2000);
 //     };
+
 //     const handleEditPlaylist = async () => {
 //         setEditPlaylistOpen(true);
 //         setNewPlaylistName(playlist.name);
@@ -1224,25 +1351,26 @@
 //         'lo-fi': ["Chill out, ${username}, with these mellow beats.", "Your perfect study companion, ${username}.", "Lo-fi vibes to calm your mind, ${username}.", "Soft beats for deep thoughts, just for you ${username}.", "${username}, relax — let the loops take over."]
 //     }), []);
 
-// useEffect(() => {
-//   const firstName = user?.fullName?.split(' ')[0] || 'friend';
-//   const messages = messagesConfig[name] || [];
+//     useEffect(() => {
+//         const firstName = user?.fullName?.split(' ')[0] || 'friend';
+//         const messages = messagesConfig[name] || [];
 
-//   if (songs.length > 0 && messages.length > 0) {
-//     const randomTemplate = messages[Math.floor(Math.random() * messages.length)];
-//     const personalized = randomTemplate.replace(/\$\{username\}/g, firstName);
-//     setRandomMessage(personalized);
-//     setShowTitle(false);
+//         if (songs.length > 0 && messages.length > 0) {
+//             const randomTemplate = messages[Math.floor(Math.random() * messages.length)];
+//             const personalized = randomTemplate.replace(/\$\{username\}/g, firstName);
+//             setRandomMessage(personalized);
+//             setShowTitle(false);
 
-//     const timeout = setTimeout(() => {
-//       setRandomMessage('');
-//       setShowTitle(true);
-//     }, 6500);
+//             const timeout = setTimeout(() => {
+//                 setRandomMessage('');
+//                 setShowTitle(true);
+//             }, 6500);
 
-//     return () => clearTimeout(timeout);
-//   }
-// }, [name, songs, user, messagesConfig]);
-// useEffect(() => {
+//             return () => clearTimeout(timeout);
+//         }
+//     }, [name, songs, user, messagesConfig]);
+
+//     useEffect(() => {
 //         setLoading(true);
 //         setError(null);
 //         if (!name || !categoryType || !token) {
@@ -1301,60 +1429,169 @@
 //         return <div className="content-area"><p>Please log in to view this page.</p></div>;
 //     }
 
-//    return (
-//   <div className="mood-songs-screen">
-//     <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-//     <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onRequestSongOpen={openRequestModal} />
-    
-//     <div className="content-area">
-//       {randomMessage && (
-//         <div className="random-message animate-fade-in-out">
-//           {randomMessage}
+//     return (
+//         <div className="mood-songs-screen">
+//             <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+//             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onRequestSongOpen={openRequestModal} />
+//             <div className="content-area">
+//                 {randomMessage && (
+//                     <div className="random-message animate-fade-in-out">
+//                         {randomMessage}
+//                     </div>
+//                 )}
+//                 {showTitle && (
+//                     <h2 className="category-title fade-in">
+//                         {name.charAt(0).toUpperCase() + name.slice(1)} Songs
+//                     </h2>
+//                 )}
+//                 {loading ? (
+//                     <div className="loading"><div></div></div>
+//                 ) : error ? (
+//                     <div className="search-message animate-fade-in-out">{error}</div>
+//                 ) : songs.length > 0 ? (
+//                     <SongList
+//                         songs={songs}
+//                         onSongClick={(song) => {
+//                             setSelectedSong({ ...song, songList: songs });
+//                             setIsPlaying(true);
+//                             setIsMinimized(false);
+//                         }}
+//                         onAddToPlaylist={handleAddToPlaylist}
+//                         playlistSongIds={playlistSongIds}
+//                     />
+//                 ) : (
+//                     <div className="search-message animate-fade-in-out">
+//                         No songs found for this category.
+//                     </div>
+//                 )}
+//             </div>
+//             <PlaylistSelectionModal
+//                 isOpen={showPlaylistModal}
+//                 onClose={() => setShowPlaylistModal(false)}
+//                 onSelectPlaylist={handleSelectPlaylist}
+//                 playlists={playlists}
+//                 loading={loadingPlaylists}
+//                 message={addMessage}
+//                 onCreatePlaylist={handleCreatePlaylist}
+//             />
+//             <MusicPlayer />
 //         </div>
-//       )}
-
-//       {showTitle && (
-//         <h2 className="category-title fade-in">
-//           {name.charAt(0).toUpperCase() + name.slice(1)} Songs
-//         </h2>
-//       )}
-
-//       {loading ? (
-//         <div className="loading"><div></div></div>
-//       ) : error ? (
-//         <div className="search-message animate-fade-in-out">{error}</div>
-//       ) : songs.length > 0 ? (
-//         <SongList
-//           songs={songs}
-//           onSongClick={(song) => {
-//             setSelectedSong({ ...song, songList: songs });
-//             setIsPlaying(true);
-//             setIsMinimized(false);
-//           }}
-//           onAddToPlaylist={handleAddToPlaylist}
-//           playlistSongIds={playlistSongIds}
-//         />
-//       ) : (
-//         <div className="search-message animate-fade-in-out">
-//           No songs found for this category.
-//         </div>
-//       )}
-//     </div>
-
-//     <PlaylistSelectionModal
-//       isOpen={showPlaylistModal}
-//       onClose={() => setShowPlaylistModal(false)}
-//       onSelectPlaylist={handleSelectPlaylist}
-//       playlists={playlists}
-//       loading={loadingPlaylists}
-//       message={addMessage}
-//       onCreatePlaylist={handleCreatePlaylist}
-//     />
-//     <MusicPlayer />
-//   </div>
-// );
+//     );
 // }
 
+// function SingerSongsScreen({ openRequestModal }) {
+//     const { name } = useParams();
+//     const { user } = useAuth();
+//     const { setSelectedSong, setIsPlaying, setIsMinimized } = useMusicPlayer();
+//     const { playlists, addToPlaylist, playlistSongIds, loadingPlaylists, createPlaylist } = usePlaylist();
+//     const [songs, setSongs] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+//     const [songToAdd, setSongToAdd] = useState(null);
+//     const [addMessage, setAddMessage] = useState('');
+//     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+//     const [error, setError] = useState(null);
+//     const token = localStorage.getItem('token');
+
+//     useEffect(() => {
+//         setLoading(true);
+//         setError(null);
+//         if (!name || !token) {
+//             setError('Invalid singer or authentication issue.');
+//             setLoading(false);
+//             return;
+//         }
+//         axios.get(`https://music-backend-akb5.onrender.com/api/songs?singer=${encodeURIComponent(name)}`, {
+//             headers: { Authorization: `Bearer ${token}` },
+//         })
+//         .then((res) => {
+//             if (Array.isArray(res.data)) {
+//                 setSongs(res.data);
+//             } else {
+//                 setSongs([]);
+//                 setError('Invalid data format received from server.');
+//             }
+//         })
+//         .catch((err) => {
+//             console.error(`Failed to fetch songs for ${name}:`, err);
+//             setError(`Failed to fetch songs: ${err.message || 'Server error'}`);
+//             setSongs([]);
+//         })
+//         .finally(() => setLoading(false));
+//     }, [name, token]);
+
+//     const handleAddToPlaylist = (songId) => {
+//         setSongToAdd(songId);
+//         setShowPlaylistModal(true);
+//         setAddMessage('');
+//     };
+
+//     const handleSelectPlaylist = async (playlistId) => {
+//         const result = await addToPlaylist(songToAdd, playlistId);
+//         setAddMessage(result.message);
+//         if (result.success) {
+//             setTimeout(() => { setShowPlaylistModal(false); setSongToAdd(null); }, 1000);
+//         }
+//     };
+
+//     const handleCreatePlaylist = async () => {
+//         const playlistName = prompt('Enter playlist name:');
+//         if (playlistName?.trim()) {
+//             const result = await createPlaylist(playlistName.trim());
+//             setAddMessage(result.message);
+//             if (result.success && songToAdd) {
+//                 const newPlaylist = playlists.find(p => p.name === playlistName.trim());
+//                 if (newPlaylist) {
+//                     await handleSelectPlaylist(newPlaylist._id);
+//                 }
+//             }
+//         }
+//     };
+
+//     if (!user) {
+//         return <div className="content-area"><p>Please log in to view this page.</p></div>;
+//     }
+
+//     return (
+//         <div className="singer-songs-screen">
+//             <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+//             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onRequestSongOpen={openRequestModal} />
+//             <div className="content-area">
+//                 <h2>{name.charAt(0).toUpperCase() + name.slice(1)} Songs</h2>
+//                 {loading ? (
+//                     <div className="loading"><div></div></div>
+//                 ) : error ? (
+//                     <div className="search-message animate-fade-in-out">{error}</div>
+//                 ) : songs.length > 0 ? (
+//                     <SongList
+//                         songs={songs}
+//                         onSongClick={(song) => {
+//                             setSelectedSong({ ...song, songList: songs });
+//                             setIsPlaying(true);
+//                             setIsMinimized(false);
+//                         }}
+//                         onAddToPlaylist={handleAddToPlaylist}
+//                         playlistSongIds={playlistSongIds}
+//                     />
+//                 ) : (
+//                     <div className="search-message animate-fade-in-out">
+//                         No songs found for this singer.
+//                     </div>
+//                 )}
+//             </div>
+//             <PlaylistSelectionModal
+//                 isOpen={showPlaylistModal}
+//                 onClose={() => setShowPlaylistModal(false)}
+//                 onSelectPlaylist={handleSelectPlaylist}
+//                 playlists={playlists}
+//                 loading={loadingPlaylists}
+//                 message={addMessage}
+//                 onCreatePlaylist={handleCreatePlaylist}
+//             />
+//             <MusicPlayer />
+//         </div>
+//     );
+// }
 
 // function Account({ openRequestModal }) {
 //     const { user, updateUser, loading } = useAuth();
@@ -1377,30 +1614,37 @@
 //     };
 
 //     const saveProfile = async () => {
-//         if (!newFullName.trim()) {
-//             setMessage("Full name cannot be empty.");
-//             setTimeout(() => setMessage(""), 3000);
-//             return;
-//         }
-//         if (newFullName.trim() === user.fullName) {
-//             setMessage("The new name is the same as the old one.");
-//             setTimeout(() => setMessage(""), 3000);
-//             setEditProfileOpen(false);
-//             return;
-//         }
-//         setIsSaving(true);
-//         setMessage("");
-//         try {
-//             const result = await updateUser({ fullName: newFullName.trim() });
-//             setMessage(result.message);
-//             if (result.success) setEditProfileOpen(false);
-//         } catch {
-//             setMessage("An unexpected error occurred.");
-//         } finally {
-//             setIsSaving(false);
-//             setTimeout(() => setMessage(""), 3000);
-//         }
-//     };
+//     if (!newFullName.trim()) {
+//         setMessage("Full name cannot be empty.");
+//         setTimeout(() => setMessage(""), 3000);
+//         return;
+//     }
+
+//     if (newFullName.trim() === user.fullName) {
+//         setMessage("The new name is the same as the old one.");
+//         setTimeout(() => setMessage(""), 3000);
+//         setEditProfileOpen(false);
+//         return;
+//     }
+
+//     setIsSaving(true);
+//     setMessage("");
+
+
+//     try {
+//         const result = await updateUser({ fullName: newFullName.trim() });
+//         setMessage(result.message);
+
+//         if (result.success) setEditProfileOpen(false);
+
+//     } catch {
+//         setMessage("An unexpected error occurred.");
+//     } finally {
+//         setIsSaving(false);
+//         setTimeout(() => setMessage(""), 3000);
+//     }
+// };
+
 
 //     const formatJoinDate = (joinDate) => {
 //         if (!joinDate) return "N/A";
@@ -1480,6 +1724,7 @@
 //                             <Route path="/account" element={<ProtectedRoute><Account openRequestModal={() => setIsRequestModalOpen(true)} /></ProtectedRoute>} />
 //                             <Route path="/moods/:name" element={<ProtectedRoute><CategorySongsScreen categoryType="mood" openRequestModal={() => setIsRequestModalOpen(true)} /></ProtectedRoute>} />
 //                             <Route path="/genres/:name" element={<ProtectedRoute><CategorySongsScreen categoryType="genre" openRequestModal={() => setIsRequestModalOpen(true)} /></ProtectedRoute>} />
+//                             <Route path="/singers/:name" element={<ProtectedRoute><SingerSongsScreen openRequestModal={() => setIsRequestModalOpen(true)} /></ProtectedRoute>} />
 //                             <Route path="/playlist/:playlistId" element={<ProtectedRoute><PlaylistDetailScreen openRequestModal={() => setIsRequestModalOpen(true)} /></ProtectedRoute>} />
 //                             <Route path="*" element={<ProtectedRoute><Navigate to="/main" replace /></ProtectedRoute>} />
 //                         </Routes>
@@ -1491,7 +1736,6 @@
 // }
 
 // export default App;
-
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
@@ -2294,7 +2538,6 @@ function RequestSongModal({ isOpen, onClose }) {
     );
 }
 
-
 function MainScreen({ openRequestModal }) {
   const { user } = useAuth();
   const { setIsMinimized } = useMusicPlayer();
@@ -2337,29 +2580,37 @@ function MainScreen({ openRequestModal }) {
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const moodCategories = ['happy', 'sad', 'love', 'motivational', 'nostalgic', 'heartbreak', 'spiritual', 'travel'];
+  const moodCategories = [
+    'happy',
+    'sad',
+    'love',
+    'motivational',
+    'nostalgic',
+    'heartbreak',
+    'spiritual',
+    'travel',
+  ];
 
   const singers = [
-    { name: '', id: 'sonu nigam', imageFileName: 'sonu.png' },
-    { name: '', id: 'lata mangeshkar', imageFileName: 'lata.png' },
-     
-     { name: '', id: 'kk', imageFileName: 'kk.png' },
-    { name: '', id: 'mohd rafi', imageFileName: 'rafi.png' },
-    { name: '', id: 'arijit singh', imageFileName: 'arjit.png' },
-    { name: '', id: 'neha kakkar', imageFileName: 'neha.png' },
-    { name: '', id: 'kishore kumar', imageFileName: 'kishor.png' },
-    { name: '', id: 'anirudh', imageFileName: 'ani.png' },
-    { name: '', id: 'nusrat fateh ali khan', imageFileName: 'nusrat.jpg' },
-    { name: '', id: 'diljit dosanjh', imageFileName: 'diljit.png' },
-  { name: '', id: 'jubin nautiyal', imageFileName: 'jubin.jpg' },
-    { name: '', id: 'shreya ghoshal', imageFileName: 'sherya.png' },
-    
+    { name: '', id: 'sonu nigam', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/sonu_ztsynp.webp ' },
+    { name: '', id: 'lata mangeshkar', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/lata_ezfr2n.webp ' },
+    { name: '', id: 'kk', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/kk_py1off.webp ' },
+    { name: '', id: 'mohd rafi', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/rafi_n9wslm.webp ' },
+    { name: '', id: 'neha kakkar', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/neha_lzh67j.webp ' },
+    { name: '', id: 'kishore kumar', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/kishor_smr0v8.webp ' },
+    { name: '', id: 'anirudh', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/ani_wbajfs.webp ' },
+    { name: '', id: 'nusrat fateh ali khan', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/nusrat_g8dnqr.webp ' },
+    { name: '', id: 'diljit dosanjh', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/diljit_ftpuid.webp ' },
+    { name: '', id: 'jubin nautiyal', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/jubin_am3rn2.webp ' },
+    { name: '', id: 'shreya ghoshal', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/sherya_qkynbl.webp ' },
+    { name: '', id: 'arijit singh', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/arjit_g4zpgt.webp ' },
   ];
+
   const genres = [
-    { name: '', id: 'rap', imageFileName: 'rap.jpg' },
-    { name: '', id: 'classical', imageFileName: 'class.png' },
-    { name: '', id: 'party', imageFileName: 'party.jpg' },
-    { name: '', id: 'lo-fi', imageFileName: 'lofi.jpg' },
+    { name: '', id: 'rap', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751730905/rap_g0sheq.jpg ' },
+    { name: '', id: 'classical', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751730906/class_kh980u.png ' },
+    { name: '', id: 'party', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751730905/party_lm1glx.jpg ' },
+    { name: '', id: 'lo-fi', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751730905/lofi_mpmwqv.jpg ' },
   ];
 
   const scrollSingers = (direction) => {
@@ -2417,7 +2668,7 @@ function MainScreen({ openRequestModal }) {
                   onClick={() => handleSingerClick(singer.id)}
                 >
                   <img
-                    src={`/singers/${singer.imageFileName}`}
+                    src={singer.imageFileName}
                     alt={singer.name}
                     className="singer-card-image fade-in"
                     loading="lazy"
@@ -2474,7 +2725,7 @@ function MainScreen({ openRequestModal }) {
                 onClick={() => handleGenreClick(genre.id)}
               >
                 <img
-                  src={`/genres/${genre.imageFileName}`}
+                  src={genre.imageFileName}
                   alt={genre.name}
                   className="genre-card-image fade-in"
                   loading="lazy"
@@ -2490,6 +2741,7 @@ function MainScreen({ openRequestModal }) {
     </div>
   );
 }
+
 
 function SearchScreen({ openRequestModal }) {
     const { setSelectedSong, setIsPlaying, setIsMinimized } = useMusicPlayer();
