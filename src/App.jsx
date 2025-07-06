@@ -1737,6 +1737,7 @@
 
 // export default App;
 
+
 import React, { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -2599,7 +2600,7 @@ function MainScreen({ openRequestModal }) {
     { name: '', id: 'neha kakkar', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/neha_lzh67j.webp ' },
     { name: '', id: 'kishore kumar', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/kishor_smr0v8.webp ' },
     { name: '', id: 'anirudh', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/ani_wbajfs.webp ' },
-    { name: '', id: 'nusrat fateh ali khan', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/nusrat_g8dnqr.webp ' },
+    { name: '', id: 'rahat fateh ali khan', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751787551/raha_hinul7.png ' },
     { name: '', id: 'diljit dosanjh', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/diljit_ftpuid.webp ' },
     { name: '', id: 'jubin nautiyal', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733129/jubin_am3rn2.webp ' },
     { name: '', id: 'shreya ghoshal', imageFileName: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1751733128/sherya_qkynbl.webp ' },
@@ -2795,6 +2796,7 @@ function SearchScreen({ openRequestModal }) {
         setShowPlaylistModal(true);
         setAddMessage('');
     };
+
 
     const handleSelectPlaylist = async (playlistId) => {
         const result = await addToPlaylist(songToAdd, playlistId);
