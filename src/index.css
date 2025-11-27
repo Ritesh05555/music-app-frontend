@@ -3811,3 +3811,23 @@ body[data-mode="neon"] .request-input {
     height: 100px;
   }
 }
+
+
+@media (max-width: 480px) {
+  /* Prevent "Choose Your Mood" (.moods-screen h2) from being hidden behind the mobile navbar */
+  .moods-screen h2 {
+    padding-top: 50px; /* adjust value as needed (e.g. 56px - 96px) */
+  }
+}
+
+@media (max-width: 480px) {
+  /* Push song-list headings (e.g. "Sad Songs", "Happy", etc.) down on small phones */
+  .mood-songs-screen .content-area h1,
+  .mood-songs-screen h1,
+  .mood-songs-screen .content-area h2,
+  .mood-songs-screen h2,
+  .mood-section h2 {
+    margin-top: 18px; /* adjust between ~36px - 72px to taste */
+    padding-top: 0;
+  }
+}
