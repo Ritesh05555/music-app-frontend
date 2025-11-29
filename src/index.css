@@ -135,6 +135,56 @@ body[data-mode="neon"] {
     z-index: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+.splash-screen, .auth-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    /* Premium gradient */
+    background: linear-gradient(54deg,
+        #1df9b7,
+        #bdd351,
+        #e22bb4,
+        #162ee7
+    );
+    background-size: 400% 400%;
+    background-position: 100% 50%;
+
+
+    animation:
+        fadeInFromBlack 3s ease-out forwards,
+        gradientFlow 7s ease-in-out infinite 2s;
+
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Step 1: Start BLACK exactly like PWA launch screen */
+@keyframes fadeInFromBlack {
+    0% {
+        filter: brightness(0);   
+    }
+    100% {
+        filter: brightness(1);   
+    }
+}
+
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 100% 50%;
+    }
+    50% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
 
 .splash-screen h1, .auth-screen h2 {
     font-size: clamp(2rem, 6vw, 3rem);
@@ -3696,7 +3746,7 @@ body[data-mode="neon"] .request-input {
   .moods-screen h2,
   .lifelessons-screen h2,
   .ots-screen h2 {
-    padding-top: 30px;
+    padding-top: 50px;
   }
 }
 
@@ -3812,22 +3862,590 @@ body[data-mode="neon"] .request-input {
   }
 }
 
+/* ========================================
+   LANGUAGE FILTER - MOOD SONGS SCREEN 
+   Position: LEFT TOP below H1 "Happy Songs"
+======================================== */
 
-@media (max-width: 480px) {
-  /* Prevent "Choose Your Mood" (.moods-screen h2) from being hidden behind the mobile navbar */
-  .moods-screen h2 {
-    padding-top: 50px; /* adjust value as needed (e.g. 56px - 96px) */
+/* Main Language Filter Container */
+.mood-songs-language-filter {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    margin: 1rem 0 2rem 1rem; /* Space below H1 + left alignment */
+    z-index: 50;
+}
+
+/* Wrapper for dropdown positioning */
+.language-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Main Filter Button */
+.mood-language-filter-btn {
+    background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+    color: var(--text-color) !important;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 48px;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mood-language-filter-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+}
+
+.mood-language-filter-btn:active {
+    transform: translateY(-1px) scale(1);
+}
+
+/* Dropdown Menu */
+.mood-language-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: rgba(45, 45, 45, 0.98);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    min-width: 180px;
+    animation: slideDownLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+@keyframes slideDownLeft {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Language Options */
+.mood-language-option {
+    padding: 16px 20px;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.mood-language-option:last-child {
+    border-bottom: none;
+}
+
+.mood-language-option:hover {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(167, 139, 250, 0.2));
+    color: var(--text-color);
+    padding-left: 28px;
+    transform: translateX(4px);
+}
+
+.mood-language-option:active {
+    background: rgba(59, 130, 246, 0.3);
+    transform: scale(0.98);
+}
+
+/* Active/Selected Language */
+.mood-language-option.active {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.25), rgba(167, 139, 250, 0.25));
+}
+
+/* Scrollbar for dropdown */
+.mood-language-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mood-language-dropdown::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.mood-language-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.mood-language-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* THEME SUPPORT */
+
+/* Light Mode */
+body[data-mode="light"] .mood-language-filter-btn {
+    background: linear-gradient(135deg, var(--light-accent-color), var(--light-secondary));
+    color: var(--light-text) !important;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+body[data-mode="light"] .mood-language-dropdown {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+body[data-mode="light"] .mood-language-option {
+    color: var(--light-text);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+body[data-mode="light"] .mood-language-option:hover {
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.15), rgba(107, 70, 193, 0.15));
+}
+
+/* Neon Mode */
+body[data-mode="neon"] .mood-language-filter-btn {
+    background: linear-gradient(135deg, var(--neon-accent-color), var(--neon-secondary));
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+body[data-mode="neon"] .mood-language-dropdown {
+    background: rgba(13, 27, 42, 0.98);
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 212, 255, 0.2);
+}
+
+body[data-mode="neon"] .mood-language-option:hover {
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.25), rgba(100, 255, 218, 0.25));
+}
+
+/* RESPONSIVE DESIGN */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    .mood-songs-language-filter {
+        margin: 0.8rem 0 1.5rem 0.8rem;
+    }
+    
+    .mood-language-filter-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-height: 44px;
+    }
+    
+    .mood-language-dropdown {
+        min-width: 160px;
+        left: -10px;
+    }
+}
+
+/* Mobile Large (600px - 767px) */
+@media (max-width: 767px) {
+    .mood-songs-language-filter {
+        margin: 0.5rem 0 1rem 0.5rem;
+        position: sticky;
+        top: 4.5rem; /* Below navbar */
+        background: inherit;
+        z-index: 40;
+        padding: 0.5rem 0;
+    }
+    
+    .mood-language-filter-btn {
+        padding: 10px 16px;
+        font-size: 12px;
+        min-height: 42px;
+        border-radius: 20px;
+    }
+    
+    .mood-language-dropdown {
+        min-width: 150px;
+        left: -5px;
+        top: 105%;
+        border-radius: 16px;
+    }
+    
+    .mood-language-option {
+        padding: 14px 16px;
+        font-size: 13px;
+    }
+}
+
+/* Mobile Medium (480px - 599px) */
+@media (max-width: 599px) {
+    .mood-songs-language-filter {
+        margin: 0.4rem 0 0.8rem 0.4rem;
+    }
+    
+    .mood-language-filter-btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        min-height: 40px;
+        gap: 8px;
+    }
+    
+    .mood-language-dropdown {
+        min-width: 140px;
+    }
+    
+    .mood-language-option {
+        padding: 12px 14px;
+        font-size: 12px;
+        gap: 10px;
+    }
+}
+
+/* Mobile Small (320px and below) */
+@media (max-width: 479px) {
+    .mood-songs-language-filter {
+        margin: 0.3rem 0 0.6rem 0.3rem;
+    }
+    
+    .mood-language-filter-btn {
+        padding: 7px 12px;
+        font-size: 11px;
+        min-height: 38px;
+        border-radius: 18px;
+        gap: 6px;
+    }
+    
+    .mood-language-dropdown {
+        min-width: 130px;
+        border-radius: 14px;
+    }
+    
+    .mood-language-option {
+        padding: 10px 12px;
+        font-size: 11px;
+        gap: 8px;
+    }
+}
+
+/* Touch devices - enhanced touch targets */
+@media (hover: none) and (pointer: coarse) {
+    .mood-language-filter-btn {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+    
+    .mood-language-option {
+        min-height: 48px;
+        padding: 16px 20px;
+    }
+}
+
+
+.music-player.minimized .minimize-player-button {
+  /* keep sizing/placement consistent with existing design */
+  right: 3.5rem;
+  top: 0.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* show a "next track" glyph instead of the up-arrow glyph only when minimized */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭'; /* Unicode next-track symbol */
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-block;
+  transform: none;
+}
+
+/* ensure full-screen state keeps original icon/content (no overwrite) */
+.music-player.full-screen .minimize-player-button::before {
+  content: none;
+}
+
+.music-player.minimized .minimize-player-button {
+  /* keep sizing/placement consistent with existing design */
+  right: 3.5rem;
+  top: 0.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* show a "next track" glyph instead of the up-arrow glyph only when minimized */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭'; /* Unicode next-track symbol */
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-block;
+  transform: none;
+}
+
+/* ensure full-screen state keeps original icon/content (no overwrite) */
+.music-player.full-screen .minimize-player-button::before {
+  content: none; }
+
+
+/* Hide the FontAwesome SVG chevron when minimized (keep the ::before "⏭" next glyph).
+   Show the original SVG again in full-screen so the up/down icon remains. */
+.music-player.minimized .minimize-player-button svg,
+.music-player.minimized .minimize-player-button .fa {
+  display: none !important;
+}
+
+.music-player.full-screen .minimize-player-button svg,
+.music-player.full-screen .minimize-player-button .fa {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Force language filter to align top-left (overrides any inline styles) */
+.language-filter-container {
+  display: flex !important;
+  justify-content: flex-start !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Anchor dropdown to the left edge of the button */
+.language-dropdown {
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Ensure the button doesn't add extra left margin */
+.language-filter-btn,
+.language-filter-btn > .fa {
+  margin-left: 0 !important;
+}
+
+/* Small-screen safe adjustments */
+@media (max-width: 768px) {
+  .language-filter-container {
+    justify-content: flex-start !important;
+    margin-left: 0.5rem !important;
+  }
+  .language-dropdown {
+    left: 0 !important;
+    right: auto !important;
   }
 }
 
+
+
+
+
+
+/* Make sure both variants of the dropdown get the same behavior */
+.language-dropdown,
+.mood-language-dropdown {
+  position: absolute;     /* ensure positioned relative to wrapper */
+  top: 110%;
+  left: 0 !important;     /* anchor to left */
+  right: auto !important;
+  min-width: 140px;
+  max-height: 220px;      /* show a few items then scroll */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 6px;     /* avoid hiding content behind scrollbar */
+  z-index: 3000;          /* ensure it's above other layers */
+  background: rgba(45,45,45,0.98);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+
+/* comfortable touch rows */
+.language-dropdown .language-option,
+.mood-language-dropdown .mood-language-option,
+.language-dropdown .mood-language-option,
+.mood-language-dropdown .language-option {
+  padding: 10px 16px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+/* consistent scrollbar styling */
+.language-dropdown::-webkit-scrollbar,
+.mood-language-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+.language-dropdown::-webkit-scrollbar-track,
+.mood-language-dropdown::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+}
+.language-dropdown::-webkit-scrollbar-thumb,
+.mood-language-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 6px;
+}
+.language-dropdown::-webkit-scrollbar-thumb:hover,
+.mood-language-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+.language-dropdown,
+.mood-language-dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) rgba(255,255,255,0.03);
+}
+
+/* If dropdown still clipped because parent has overflow:hidden, render it fixed */
+.language-dropdown--fixed,
+.mood-language-dropdown--fixed {
+  position: fixed !important;
+  top: auto !important;
+  left: 1rem !important;
+  right: auto !important;
+  max-height: 40vh;
+}
+
+/* small-screen tweaks */
+@media (max-width: 599px) {
+  .language-dropdown,
+  .mood-language-dropdown { max-height: 180px; min-width: 130px; }
+}
+
+
+
+/* ===== Music player button size / alignment fixes (minimized / mobile) =====
+   Ensure the minimize (next-track glyph) and close (X) buttons use the same
+   dimensions, font-size and centering so they look consistent on mobile.
+*/
+.music-player .minimize-player-button,
+.music-player .close-player-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Make the textual ::before glyph match the SVG icon sizing and alignment */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭';
+  font-size: 1.15rem;     /* slightly larger to match FontAwesome X */
+  line-height: 1;
+  display: inline-block;
+  transform: none;
+}
+
+/* Hide SVG only for minimize button when minimized (keep close svg visible) */
+.music-player.minimized .minimize-player-button svg,
+.music-player.minimized .minimize-player-button .fa {
+  display: none !important;
+}
+
+/* Ensure close button shows its svg/icon and is centered */
+.music-player.minimized .close-player-button svg,
+.music-player.minimized .close-player-button .fa {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Small-screen (mobile) adjustments */
 @media (max-width: 480px) {
-  /* Push song-list headings (e.g. "Sad Songs", "Happy", etc.) down on small phones */
-  .mood-songs-screen .content-area h1,
-  .mood-songs-screen h1,
-  .mood-songs-screen .content-area h2,
-  .mood-songs-screen h2,
-  .mood-section h2 {
-    margin-top: 18px; /* adjust between ~36px - 72px to taste */
-    padding-top: 0;
+  .music-player .minimize-player-button,
+  .music-player .close-player-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .music-player.minimized .minimize-player-button::before {
+    font-size: 1.05rem;
+  }
+  .music-player.minimized .close-player-button svg,
+  .music-player.minimized .close-player-button .fa {
+    width: 20px;
+    height: 20px;
   }
 }
+
+/* Increase hit area without changing visual size (useful on very small screens) */
+.music-player .minimize-player-button::after,
+.music-player .close-player-button::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Accessibility: ensure buttons remain keyboard/touch accessible */
+.minimize-player-button,
+.close-player-button {
+  outline-offset: 2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Make minimized "next" glyph use same grey as close-button background */
+.music-player.minimized .minimize-player-button::before {
+  color:rgb(255, 255, 255);
+}
+
+/* If you want the glyph to sit on the exact same pill background as the X button */
+.music-player.minimized .minimize-player-button {
+  background: rgb(255, 255, 255);
+}
+
+/* Make minimized "next" glyph use same grey as close-button background */
+.music-player.minimized .minimize-player-button::before {
+  color: rgba(251, 248, 248, 0.945) !important;
+}
+
+/* If you want the glyph to sit on the exact same pill background as the X button */
+.music-player.minimized .minimize-player-button {
+  background: rgba(203, 201, 201, 0.4);
+}
+/* ...existing code... */

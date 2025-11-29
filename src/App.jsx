@@ -5318,6 +5318,12 @@ function MusicPlayerProvider({ children }) {
     const location = useLocation();
     const lastMinimizedRef = useRef(true);
 
+    // stable refs for handlers to read latest state
+    const selectedSongRef = useRef(selectedSong);
+    useEffect(() => { selectedSongRef.current = selectedSong; }, [selectedSong]);
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
+
     useEffect(() => {
         if (selectedSong && !isMinimized && lastMinimizedRef.current) {
             window.history.pushState({ musicPlayer: 'open' }, '');
@@ -5325,69 +5331,198 @@ function MusicPlayerProvider({ children }) {
         lastMinimizedRef.current = isMinimized;
     }, [selectedSong, isMinimized]);
 
-   useEffect(() => {
-        const onPopState = (e) => {
-            if (selectedSong && !isMinimized) {
-                setIsMinimized(true);
-                return;
-            }
+    useEffect(() => {
+        const onPopState = () => {
+            if (selectedSong && !isMinimized) setIsMinimized(true);
         };
         window.addEventListener('popstate', onPopState);
         return () => window.removeEventListener('popstate', onPopState);
     }, [selectedSong, isMinimized]);
 
+    // next / prev logic (stable)
+    const nextTrack = useCallback(() => {
+        const current = selectedSongRef.current;
+        const list = Array.isArray(current?.songList) ? current.songList : [];
+        if (!list.length) { setIsPlaying(false); return; }
+        const currentId = current?._id || current?.id;
+        const idx = list.findIndex(s => (s._id || s.id) === currentId);
+        const nextIndex = (idx === -1 ? 0 : (idx + 1) % list.length);
+        const next = list[nextIndex];
+        if (next) { setSelectedSong({ ...next, songList: list }); setIsPlaying(true); }
+    }, []);
+
+    const prevTrack = useCallback(() => {
+        const current = selectedSongRef.current;
+        const list = Array.isArray(current?.songList) ? current.songList : [];
+        if (!list.length) { setIsPlaying(false); return; }
+        const currentId = current?._id || current?.id;
+        const idx = list.findIndex(s => (s._id || s.id) === currentId);
+        const prevIndex = (idx === -1 ? 0 : (idx - 1 + list.length) % list.length);
+        const prev = list[prevIndex];
+        if (prev) { setSelectedSong({ ...prev, songList: list }); setIsPlaying(true); }
+    }, []);
+
+    // Media Session integration: set handlers once and keep metadata updated later
     useEffect(() => {
-        const audioSrc = selectedSong?.audioUrl || selectedSong?.audio;
+        const ms = navigator.mediaSession;
+        if (!ms) return;
 
-        if (!audioSrc) {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.src = '';
-            }
-            return;
-        }
-
-        if (!audioRef.current || audioRef.current.src !== audioSrc) {
-            if (audioRef.current) audioRef.current.pause();
-            audioRef.current = new Audio(audioSrc);
-            audioRef.current.preload = 'auto';
-            audioRef.current.onerror = () => console.error('Audio load error for:', audioSrc);
-            audioRef.current.addEventListener('timeupdate', () => {
-                if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
-            });
-            audioRef.current.addEventListener('ended', () => {
-                if (selectedSong.songList && selectedSong.songList.length > 0) {
-                    const nextIndex = (currentSongIndex + 1) % selectedSong.songList.length;
-                    setSelectedSong({ ...selectedSong.songList[nextIndex], songList: selectedSong.songList });
-                    setIsPlaying(true);
-                } else {
-                    setIsPlaying(false);
+        try {
+            ms.setActionHandler('nexttrack', nextTrack);
+            ms.setActionHandler('previoustrack', prevTrack);
+            ms.setActionHandler('play', () => setIsPlaying(true));
+            ms.setActionHandler('pause', () => setIsPlaying(false));
+            ms.setActionHandler('stop', () => setIsPlaying(false));
+            ms.setActionHandler('seekto', (details) => {
+                const audio = audioRef.current;
+                if (!audio || typeof details.seekTime !== 'number') return;
+                // fastSeek if supported (better on mobile)
+                try {
+                    if (details.fastSeek && typeof audio.fastSeek === 'function') audio.fastSeek(details.seekTime);
+                    else audio.currentTime = details.seekTime;
+                } catch (err) {
+                    audio.currentTime = details.seekTime;
                 }
             });
-        }
-
-        audioRef.current.volume = volume;
-        if (isPlaying) audioRef.current.play().catch(err => console.error('Audio play error:', err));
-        else audioRef.current.pause();
-
-        if (selectedSong.songList) {
-            const index = selectedSong.songList.findIndex(s => (s._id || s.id) === (selectedSong._id || selectedSong.id));
-            setCurrentSongIndex(index !== -1 ? index : 0);
+        } catch (err) {
+            // ignore browsers that restrict handlers
+            console.warn('MediaSession handler setup failed', err);
         }
 
         return () => {
-            if (audioRef.current) {
+            try {
+                ms.setActionHandler('nexttrack', null);
+                ms.setActionHandler('previoustrack', null);
+                ms.setActionHandler('play', null);
+                ms.setActionHandler('pause', null);
+                ms.setActionHandler('stop', null);
+                ms.setActionHandler('seekto', null);
+            } catch {}
+        };
+    }, [nextTrack, prevTrack]);
+
+    useEffect(() => {
+        const audioSrc = selectedSong?.audioUrl || selectedSong?.audio;
+
+        const cleanupAudioListeners = () => {
+            if (!audioRef.current) return;
+            audioRef.current.pause();
+            audioRef.current.onended = null;
+            audioRef.current.ontimeupdate = null;
+            audioRef.current.onerror = null;
+        };
+
+        if (!audioSrc) {
+            cleanupAudioListeners();
+            if (audioRef.current) audioRef.current.src = '';
+            // clear media metadata
+            if (navigator.mediaSession) navigator.mediaSession.metadata = null;
+            if (navigator.mediaSession) navigator.mediaSession.playbackState = 'none';
+            setCurrentTime(0);
+            return;
+        }
+
+        // replace audio element when source changes
+        if (!audioRef.current || audioRef.current.src !== audioSrc) {
+            cleanupAudioListeners();
+            audioRef.current = new Audio(audioSrc);
+            audioRef.current.preload = 'auto';
+            audioRef.current.crossOrigin = 'anonymous'; // helps some platforms show artwork
+            audioRef.current.onerror = () => console.error('Audio load error for:', audioSrc);
+
+            audioRef.current.ontimeupdate = () => {
+                if (!audioRef.current) return;
+                setCurrentTime(audioRef.current.currentTime);
+                // update position state for MediaSession (so remote UI shows progress and seek works)
+                try {
+                    const ms = navigator.mediaSession;
+                    if (ms && typeof ms.setPositionState === 'function' && audioRef.current.duration && isFinite(audioRef.current.duration)) {
+                        ms.setPositionState({
+                            duration: Math.max(0, audioRef.current.duration),
+                            position: audioRef.current.currentTime,
+                            playbackRate: audioRef.current.playbackRate || 1
+                        });
+                    }
+                } catch (err) {
+                    // ignore
+                }
+            };
+
+            audioRef.current.onended = () => {
+                // use selectedSongRef so this handler works even if state changed by other effects
+                const current = selectedSongRef.current;
+                const list = Array.isArray(current?.songList) ? current.songList : [];
+                if (!list.length) { setIsPlaying(false); return; }
+                const currentId = current?._id || current?.id;
+                const idx = list.findIndex(s => (s._id || s.id) === currentId);
+                const nextIndex = (idx === -1 ? 0 : (idx + 1) % list.length);
+                const next = list[nextIndex];
+                if (next) { setSelectedSong({ ...next, songList: list }); setIsPlaying(true); }
+                else setIsPlaying(false);
+            };
+        }
+
+        // update media metadata for lockscreen / remote UI
+        try {
+            const ms = navigator.mediaSession;
+            if (ms) {
+                ms.metadata = new window.MediaMetadata({
+                    title: selectedSong?.title || '',
+                    artist: selectedSong?.singer || '',
+                    album: selectedSong?.movie || selectedSong?.genre || '',
+                    artwork: [
+                        { src: selectedSong?.thumbnailUrl || selectedSong?.thumbnail || '', sizes: '300x300', type: 'image/png' }
+                    ]
+                });
+                ms.playbackState = isPlaying ? 'playing' : 'paused';
+            }
+        } catch (err) {
+            // ignore metadata errors
+        }
+
+        // apply volume & play/pause
+        if (audioRef.current) {
+            audioRef.current.volume = typeof volume === 'number' ? volume : 0.5;
+            if (isPlaying) {
+                const p = audioRef.current.play();
+                if (p && typeof p.catch === 'function') {
+                    p.catch(err => {
+                        if (err?.name !== 'NotAllowedError') console.error('Audio play error:', err);
+                    });
+                }
+            } else {
                 audioRef.current.pause();
-                audioRef.current.removeEventListener('timeupdate', () => {});
-                audioRef.current.removeEventListener('ended', () => {});
+            }
+        }
+
+        // keep currentSongIndex for UI
+        if (selectedSong?.songList) {
+            const idx = selectedSong.songList.findIndex(s => (s._id || s.id) === (selectedSong._id || selectedSong.id));
+            setCurrentSongIndex(idx !== -1 ? idx : 0);
+        }
+
+        // ensure mediaSession playbackState reflects current play state
+        try { if (navigator.mediaSession) navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused'; } catch {}
+
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.ontimeupdate = null;
+                audioRef.current.onended = null;
+                audioRef.current.onerror = null;
             }
         };
-    }, [selectedSong, isPlaying, volume, currentSongIndex]);
+    }, [selectedSong, isPlaying, volume]);
+
+    // keep playbackState in media session when play/pause toggles
+    useEffect(() => {
+        try { if (navigator.mediaSession) navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused'; } catch {}
+    }, [isPlaying]);
 
     const contextValue = {
         selectedSong, setSelectedSong, isPlaying, setIsPlaying,
         currentTime, setCurrentTime, volume, setVolume,
-        isMinimized, setIsMinimized, currentSongIndex, setCurrentSongIndex, audioRef
+        isMinimized, setIsMinimized, currentSongIndex, setCurrentSongIndex, audioRef,
+        nextTrack, prevTrack
     };
 
     return (
@@ -5835,9 +5970,15 @@ function MusicPlayer() {
                         <p>{secondaryText}</p>
                     </div>
                     <div className="player-minimized-buttons">
-                        <button className="minimize-player-button" onClick={(e) => { e.stopPropagation(); setIsMinimized(false); }}>
-                            <FontAwesomeIcon icon="fa-chevron-up" />
+                        {/* REPLACED: when minimized, this button now advances to next track without opening full-screen */}
+                        <button
+                            className="minimize-player-button"
+                            onClick={(e) => { e.stopPropagation(); changeSong(1); }}
+                            aria-label="Next track"
+                        >
+                            <FontAwesomeIcon icon="fa-step-forward" />
                         </button>
+
                         <button className="close-player-button" onClick={(e) => { e.stopPropagation(); setSelectedSong(null); audioRef.current.pause(); audioRef.current.src = ''; }}>
                             <FontAwesomeIcon icon="fa-times" />
                         </button>
@@ -5877,7 +6018,6 @@ function MusicPlayer() {
         </div>
     );
 }
-
 function SongList({ songs, onSongClick, onAddToPlaylist, playlistItemIds }) {
     return (
         <div className="songs-row">
@@ -6051,7 +6191,6 @@ function RequestSongModal({ isOpen, onClose }) {
             setRequests([...requests, { title: '', movie: '' }]);
         }
     };
-
     const handleRemoveRequest = (index) => {
         if (requests.length > 1) {
             const newRequests = requests.filter((_, i) => i !== index);
@@ -6178,6 +6317,7 @@ function MoodsScreen({ openRequestModal }) {
   const moodCategories = [
     { name: 'happy', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513535/hap_oihkap.jpg' },
     { name: 'sad', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/sad_lbqcin.jpg' },
+    { name: 'workout', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752961155/gym_ivap8k.png' },
      { name: 'love', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752515509/love_bnjlgc.jpg' },
       { name: 'travel', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/travel_xwu6mq.jpg' },
     { name: 'heartbreak', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513535/heartb_deh8ds.png' },
@@ -6796,6 +6936,7 @@ function PlaylistDetailScreen({ openRequestModal }) {
     );
 }
 
+
 function CategorySongsScreen({ categoryType, openRequestModal }) {
     const { name } = useParams();
     const { user } = useAuth();
@@ -6810,7 +6951,24 @@ function CategorySongsScreen({ categoryType, openRequestModal }) {
     const [randomMessage, setRandomMessage] = useState('');
     const [error, setError] = useState(null);
     const [showTitle, setShowTitle] = useState(false);
+    
+    // NEW: Language filter states
+    const [selectedLanguage, setSelectedLanguage] = useState('all');
+    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+    const languageWrapperRef = useRef(null); // <-- ref for outside click
+     
     const token = localStorage.getItem('token');
+    
+    const languages = [
+        { value: 'all', label: 'All' },
+        { value: 'hindi', label: 'Hindi' },
+        { value: 'english', label: 'English' },
+        { value: 'punjabi', label: 'Punjabi' },
+        { value: 'telugu', label: 'Telugu' },
+        { value: 'kannada', label: 'Kannada' },
+        { value: 'tamil', label: 'Tamil' }
+    ];
+
     const messagesConfig = useMemo(() => ({
         love: ["Hey ${username}, let your heart sing louder than words.", "${username}, fall in love with every note."],
         travel: ["Adventure awaits, ${username} — let the music guide you.", "Wanderlust in every beat, just for you ${username}."],
@@ -6826,11 +6984,41 @@ function CategorySongsScreen({ categoryType, openRequestModal }) {
         classical: ["Timeless beauty in every note for you, ${username}.", "Close your eyes and let it flow, ${username}."],
         'lo-fi': ["Chill out, ${username}, with these mellow beats.", "Your perfect study companion, ${username}."]
     }), []);
+
+    // UPDATED: Fetch songs with language filter
+    useEffect(() => {
+        setLoading(true);
+        setError(null);
+        
+        let apiUrl = `https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${encodeURIComponent(name)}`;
+        
+        // ADD LANGUAGE FILTER TO API CALL
+        if (selectedLanguage !== 'all') {
+            apiUrl += `&language=${encodeURIComponent(selectedLanguage)}`;
+        }
+        
+        axios.get(apiUrl, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setSongs(Array.isArray(res.data) ? res.data : []))
+        .catch(err => setError(`Failed to fetch songs: ${err.message || 'Server error'}`))
+        .finally(() => setLoading(false));
+    }, [name, categoryType, token, selectedLanguage]); // Added selectedLanguage dependency
+
+    // Close language dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (showLanguageDropdown && languageWrapperRef.current && !languageWrapperRef.current.contains(e.target)) {
+                setShowLanguageDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showLanguageDropdown]);
+
     useEffect(() => {
         const firstName = user?.fullName?.split(' ')[0] || 'friend';
         const messages = messagesConfig[name] || [];
         if (songs.length > 0 && messages.length > 0) {
-            const personalized = messages[Math.floor(Math.random() * messages.length)].replace(/\$\{username\}/g, firstName);
+            const personalized = messages[Math.floor(Math.random() * messages.length)].replace(/\${username}/g, firstName);
             setRandomMessage(personalized);
             setShowTitle(false);
             const timeout = setTimeout(() => {
@@ -6840,15 +7028,6 @@ function CategorySongsScreen({ categoryType, openRequestModal }) {
             return () => clearTimeout(timeout);
         }
     }, [name, songs, user, messagesConfig]);
-
-    useEffect(() => {
-        setLoading(true);
-        setError(null);
-        axios.get(`https://music-backend-akb5.onrender.com/api/songs?${categoryType}=${encodeURIComponent(name)}`, { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => setSongs(Array.isArray(res.data) ? res.data : []))
-        .catch(err => setError(`Failed to fetch songs: ${err.message || 'Server error'}`))
-        .finally(() => setLoading(false));
-    }, [name, categoryType, token]);
 
     const handleAddToPlaylist = (itemId, itemType) => {
         setItemToAdd({ id: itemId, type: itemType });
@@ -6872,6 +7051,12 @@ function CategorySongsScreen({ categoryType, openRequestModal }) {
         }
     };
 
+    // NEW: Handle language selection
+    const handleLanguageSelect = (language) => {
+        setSelectedLanguage(language);
+        setShowLanguageDropdown(false);
+    };
+
     if (!user) return <div className="content-area"><p>Please log in.</p></div>;
 
     return (
@@ -6881,19 +7066,99 @@ function CategorySongsScreen({ categoryType, openRequestModal }) {
             <div className="content-area">
                 {randomMessage && <div className="random-message animate-fade-in-out">{randomMessage}</div>}
                 {showTitle && <h2 className="category-title fade-in">{name.charAt(0).toUpperCase() + name.slice(1)} Songs</h2>}
+                
+                {/* NEW: Language Filter Dropdown - ADD THIS IN MOOD SECTION */}
+                <div className="language-filter-container" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div className="language-dropdown-wrapper" style={{ position: 'relative', display: 'inline-block' }} ref={languageWrapperRef}>
+                        <button 
+                            className="language-filter-btn" 
+                            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                            style={{
+                                background: '#333',
+                                color: 'white',
+                                border: '1px solid #555',
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <FontAwesomeIcon icon="fa-globe" />
+                            {languages.find(lang => lang.value === selectedLanguage)?.label || 'All'}
+                            <FontAwesomeIcon icon={showLanguageDropdown ? "fa-chevron-up" : "fa-chevron-down"} />
+                        </button>
+                        
+                        {showLanguageDropdown && (
+                            <div className="language-dropdown" 
+                                style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    right: 0,
+                                    background: '#222',
+                                    border: '1px solid #444',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                                    zIndex: 1000,
+                                    minWidth: '140px'
+                                }}
+                            >
+                                {languages.map((language) => (
+                                    <div
+                                        key={language.value}
+                                        className="language-option"
+                                        onClick={() => handleLanguageSelect(language.value)}
+                                        style={{
+                                            padding: '12px 16px',
+                                            cursor: 'pointer',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            borderBottom: language.value === languages[languages.length - 1].value ? 'none' : '1px solid #444'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.background = '#444'}
+                                        onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                    >
+                                        {language.label}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {loading ? <div className="loading"><div></div></div> : 
                  error ? <div className="search-message">{error}</div> : 
                  songs.length > 0 ? (
-                    <SongList songs={songs} onSongClick={(song) => { setSelectedSong({ ...song, songList: songs }); setIsPlaying(true); setIsMinimized(false); }} onAddToPlaylist={handleAddToPlaylist} playlistItemIds={playlistItemIds}/>
+                    <SongList 
+                        songs={songs} 
+                        onSongClick={(song) => { 
+                            setSelectedSong({ ...song, songList: songs }); 
+                            setIsPlaying(true); 
+                            setIsMinimized(false); 
+                        }} 
+                        onAddToPlaylist={handleAddToPlaylist} 
+                        playlistItemIds={playlistItemIds}
+                    />
                 ) : (
                     <div className="search-message">No songs found for this category.</div>
                 )}
             </div>
-            <PlaylistSelectionModal isOpen={showPlaylistModal} onClose={() => setShowPlaylistModal(false)} onSelectPlaylist={handleSelectPlaylist} playlists={playlists} loading={loadingPlaylists} message={addMessage} onCreatePlaylist={handleCreatePlaylist}/>
+            <PlaylistSelectionModal 
+                isOpen={showPlaylistModal} 
+                onClose={() => setShowPlaylistModal(false)} 
+                onSelectPlaylist={handleSelectPlaylist} 
+                playlists={playlists} 
+                loading={loadingPlaylists} 
+                message={addMessage} 
+                onCreatePlaylist={handleCreatePlaylist}
+            />
             <MusicPlayer />
         </div>
     );
 }
+
 
 function SingerSongsScreen({ openRequestModal }) {
     const { name } = useParams();
