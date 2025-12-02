@@ -6320,6 +6320,7 @@ function MoodsScreen({ openRequestModal }) {
     { name: 'workout', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752961155/gym_ivap8k.png' },
      { name: 'love', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752515509/love_bnjlgc.jpg' },
       { name: 'travel', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/travel_xwu6mq.jpg' },
+    { name: 'mashup', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1764656227/mash_suactm.png' },
     { name: 'heartbreak', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513535/heartb_deh8ds.png' },
     { name: 'spiritual', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513536/spi_o1tzp7.png' },
     { name: 'motivational', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/motiva_bvntm6.jpg' },
