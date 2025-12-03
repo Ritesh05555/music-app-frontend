@@ -4416,19 +4416,6 @@ body[data-mode="neon"] .mood-language-option:hover {
   outline-offset: 2px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Make minimized "next" glyph use same grey as close-button background */
 .music-player.minimized .minimize-player-button::before {
   color:rgb(255, 255, 255);
@@ -4448,4 +4435,323 @@ body[data-mode="neon"] .mood-language-option:hover {
 .music-player.minimized .minimize-player-button {
   background: rgba(203, 201, 201, 0.4);
 }
-/* ...existing code... */
+
+
+.music-player.minimized .minimize-player-button,
+.music-player.minimized .close-player-button,
+.music-player.minimized .player-minimized-buttons button {
+  /* identical hit area and visual size */
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  background: rgba(203,203,203,0.38) !important; /* grey pill background */
+  color: rgba(20,20,20,0.95) !important;        /* glyph/icon color to match */
+  font-size: 20px !important;                    /* unify glyph/SVG sizing */
+  line-height: 1 !important;
+  top: 0.6rem !important;
+  z-index: 12 !important;
+  transition: transform 140ms ease, background 140ms ease !important;
+}
+
+/* explicit positions (keep spacing consistent) */
+.music-player.minimized .close-player-button { right: 1rem !important; }
+.music-player.minimized .minimize-player-button { right: 5.2rem !important; }
+
+/* ensure ::before glyph and SVG/icons render same size and color */
+.music-player.minimized .minimize-player-button::before,
+.music-player.minimized .close-player-button::before,
+.music-player.minimized .minimize-player-button svg,
+.music-player.minimized .minimize-player-button .fa,
+.music-player.minimized .close-player-button svg,
+.music-player.minimized .close-player-button .fa {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: inherit !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* keep next glyph visible and centered when minimized */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭' !important;
+  font-weight: 600;
+}
+
+/* hover/active states */
+.music-player.minimized .minimize-player-button:hover,
+.music-player.minimized .close-player-button:hover,
+.music-player.minimized .player-minimized-buttons button:hover {
+  transform: scale(1.06) !important;
+  background: rgba(203,203,203,0.55) !important;
+}
+
+/* Desktop: slightly larger on wide screens */
+@media (min-width: 769px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    font-size: 22px !important;
+  }
+  .music-player.minimized .minimize-player-button { right: 6.2rem !important; }
+  .music-player.minimized .close-player-button { right: 1.2rem !important; }
+}
+
+/* Mobile: keep touch targets comfortable, adjust spacing */
+@media (max-width: 480px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    font-size: 18px !important;
+  }
+  .music-player.minimized .minimize-player-button { right: 3rem !important; }
+  .music-player.minimized .close-player-button { right: 0.6rem !important; }
+}
+
+/* ensure aria/keyboard focus visible */
+.music-player.minimized .minimize-player-button:focus,
+.music-player.minimized .close-player-button:focus {
+  outline: 3px solid rgba(59,130,246,0.22) !important;
+  outline-offset: 2px !important;
+}
+
+.music-player.minimized .minimize-player-button,
+.music-player.minimized .close-player-button,
+.music-player.minimized .player-minimized-buttons button {
+  /* identical hit area and visual size */
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  background: rgba(203,203,203,0.38) !important; /* grey pill background */
+  color: rgba(20,20,20,0.95) !important;        /* glyph/icon color to match */
+  font-size: 20px !important;                    /* unify glyph/SVG sizing */
+  line-height: 1 !important;
+  top: 0.6rem !important;
+  z-index: 12 !important;
+  transition: transform 140ms ease, background 140ms ease !important;
+}
+
+/* explicit positions (keep spacing consistent) */
+.music-player.minimized .close-player-button { right: 1rem !important; }
+.music-player.minimized .minimize-player-button { right: 5.2rem !important; }
+
+/* ensure ::before glyph and SVG/icons render same size and color */
+.music-player.minimized .minimize-player-button::before,
+.music-player.minimized .close-player-button::before,
+.music-player.minimized .minimize-player-button svg,
+.music-player.minimized .minimize-player-button .fa,
+.music-player.minimized .close-player-button svg,
+.music-player.minimized .close-player-button .fa {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: inherit !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* keep next glyph visible and centered when minimized */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭' !important;
+  font-weight: 600;
+}
+
+/* hover/active states */
+.music-player.minimized .minimize-player-button:hover,
+.music-player.minimized .close-player-button:hover,
+.music-player.minimized .player-minimized-buttons button:hover {
+  transform: scale(1.06) !important;
+  background: rgba(203,203,203,0.55) !important;
+}
+
+/* Desktop: slightly larger on wide screens */
+@media (min-width: 769px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    font-size: 22px !important;
+  }
+  .music-player.minimized .minimize-player-button { right: 6.2rem !important; }
+  .music-player.minimized .close-player-button { right: 1.2rem !important; }
+}
+
+/* Mobile: keep touch targets comfortable, adjust spacing */
+@media (max-width: 480px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    font-size: 18px !important;
+  }
+  .music-player.minimized .minimize-player-button { right: 3rem !important; }
+  .music-player.minimized .close-player-button { right: 0.6rem !important; }
+}
+
+/* ensure aria/keyboard focus visible */
+.music-player.minimized .minimize-player-button:focus,
+.music-player.minimized .close-player-button:focus {
+  outline: 3px solid rgba(59,130,246,0.22) !important;
+  outline-offset: 2px !important;
+}
+
+/* --------------------------------------------- */
+/* UNIVERSAL MINIMIZED PLAYER BUTTONS            */
+/* --------------------------------------------- */
+.music-player.minimized .minimize-player-button,
+.music-player.minimized .close-player-button,
+.music-player.minimized .player-minimized-buttons button {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  background: rgba(203,203,203,0.38) !important;
+  color: rgba(20,20,20,0.95) !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+
+  position: absolute !important;
+  top: 0.6rem !important;
+  z-index: 12 !important;
+
+  transition: transform 140ms ease, background 140ms ease !important;
+}
+
+/* --------------------------------------------- */
+/* FIX DOUBLE ICON - REMOVE SVG IN NEXT BUTTON   */
+/* --------------------------------------------- */
+.music-player.minimized .minimize-player-button svg,
+.music-player.minimized .minimize-player-button i {
+  display: none !important;
+}
+
+/* KEEP ONLY ONE ICON (⏭) */
+.music-player.minimized .minimize-player-button::before {
+  content: '⏭' !important;
+  font-weight: 700 !important;
+  font-size: 22px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure X button uses its SVG normally */
+.music-player.minimized .close-player-button svg {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+}
+
+/* --------------------------------------------- */
+/* BUTTON POSITIONS (DESKTOP DEFAULT)            */
+/* --------------------------------------------- */
+.music-player.minimized .close-player-button {
+  right: 1rem !important;
+}
+
+.music-player.minimized .minimize-player-button {
+  right: 5.2rem !important;
+}
+
+/* --------------------------------------------- */
+/* HOVER EFFECTS                                 */
+/* --------------------------------------------- */
+.music-player.minimized .minimize-player-button:hover,
+.music-player.minimized .close-player-button:hover,
+.music-player.minimized .player-minimized-buttons button:hover {
+  transform: scale(1.06) !important;
+  background: rgba(203,203,203,0.55) !important;
+}
+
+/* --------------------------------------------- */
+/* DESKTOP STYLE                                 */
+/* --------------------------------------------- */
+@media (min-width: 769px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    font-size: 22px !important;
+  }
+
+  .music-player.minimized .minimize-player-button {
+    right: 6.2rem !important;
+  }
+
+  .music-player.minimized .close-player-button {
+    right: 1.2rem !important;
+  }
+}
+
+/* --------------------------------------------- */
+/* MOBILE STYLE                                  */
+/* --------------------------------------------- */
+@media (max-width: 480px) {
+  .music-player.minimized .minimize-player-button,
+  .music-player.minimized .close-player-button,
+  .music-player.minimized .player-minimized-buttons button {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    font-size: 18px !important;
+  }
+
+  .music-player.minimized .minimize-player-button {
+    right: 3rem !important;
+  }
+
+  .music-player.minimized .close-player-button {
+    right: 0.6rem !important;
+  }
+}
+
+/* --------------------------------------------- */
+/* FOCUS ACCESSIBILITY                           */
+/* --------------------------------------------- */
+.music-player.minimized .minimize-player-button:focus,
+.music-player.minimized .close-player-button:focus {
+  outline: 3px solid rgba(59,130,246,0.22) !important;
+  outline-offset: 2px !important;
+}
