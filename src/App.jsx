@@ -6191,6 +6191,7 @@
 // }
 
 // export default App;
+
 import React, { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -7098,10 +7099,9 @@ function MoodsScreen({ openRequestModal }) {
     { name: 'workout', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752961155/gym_ivap8k.png' },
      { name: 'love', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752515509/love_bnjlgc.jpg' },
       { name: 'travel', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/travel_xwu6mq.jpg' },
-    { name: 'mashup', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1764656227/mash_suactm.png' },
     { name: 'heartbreak', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513535/heartb_deh8ds.png' },
     { name: 'spiritual', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513536/spi_o1tzp7.png' },
-     { name: 'mashup', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1764702741/mash3_or7v6g.jpg' },
+     { name: 'mashup', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1764700849/mash2_scprij.jpg' },
     { name: 'motivational', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/motiva_bvntm6.jpg' },
     { name: 'nostalgic', image: 'https://res.cloudinary.com/dt2nr7rjg/image/upload/v1752513534/nos_tv6k55.jpg' },
   ];
